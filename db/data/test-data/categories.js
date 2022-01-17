@@ -1,4 +1,4 @@
-skmodule.exports = [
+module.exports = [
   { slug: 'euro game', description: 'Abstact games that involve little luck' },
   {
     slug: 'social deduction',

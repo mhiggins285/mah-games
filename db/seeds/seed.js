@@ -1,20 +1,21 @@
 const db = require("../connection.js")
 const format = require("pg-format")
+const { categoryFormat, userFormat, reviewFormat, commentFormat } = require('../../seedFormatting.js')
 
 const seed = (data) => {
 
   const { categoryData, commentData, reviewData, userData } = data
   
   return db
-    .query(`DROP TABLE IF EXISTS categories;`)
-    .then(() => {
-      return db.query("DROP TABLE IF EXISTS comments;")
-    })
+    .query(`DROP TABLE IF EXISTS comments;`)
     .then(() => {
       return db.query("DROP TABLE IF EXISTS reviews;")
     })
     .then(() => {
       return db.query("DROP TABLE IF EXISTS users;")
+    })
+    .then(() => {
+      return db.query("DROP TABLE IF EXISTS categories;")
     })
     .then(() => {
       return db.query(`
@@ -27,7 +28,7 @@ const seed = (data) => {
       return db.query(`
       CREATE TABLE users (
         username VARCHAR(25) NOT NULL PRIMARY KEY,
-        avatar_url VARCHAR(100),
+        avatar_url VARCHAR(200),
         name VARCHAR(50)
       );`)
     })
@@ -35,14 +36,14 @@ const seed = (data) => {
       return db.query(`
       CREATE TABLE reviews (
         review_id SERIAL PRIMARY KEY,
-        title VARCHAR(100) NOT NULL,
+        title VARCHAR(200) NOT NULL,
         review_body VARCHAR(2000) NOT NULL,
         designer VARCHAR(50),
-        review_img_url VARCHAR(100),
+        review_img_url VARCHAR(200),
         votes INTEGER DEFAULT 0,
         category VARCHAR(50) NOT NULL REFERENCES categories(slug),
         owner VARCHAR(25) NOT NULL REFERENCES users(username),
-        created_at TIMESTAMP DEFAULT GETDATE()
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );`)
     })
     .then(() => {
@@ -50,9 +51,9 @@ const seed = (data) => {
       CREATE TABLE comments (
         comment_id SERIAL PRIMARY KEY,
         author VARCHAR(25) NOT NULL REFERENCES users(username),
-        review_id INTEGER NOT NULL REFERENCE reviews(review_id),
+        review_id INTEGER NOT NULL REFERENCES reviews(review_id),
         votes INTEGER DEFAULT 0,
-        created_at TIMESTAMP DEFAULT GETDATE(),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         body VARCHAR(1000) NOT NULL
       );`)
     })

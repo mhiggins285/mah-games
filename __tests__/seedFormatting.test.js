@@ -12,7 +12,7 @@ describe('functions create arrays of appropriate form to be fed into pg.format',
                     ['word game', 'Games testing players bredth and use of language' ]]
         const actual = categoryFormat(input)
 
-        expected(actual).toEqual(expected)
+        expect(actual).toEqual(expected)
 
     })
 
@@ -26,7 +26,7 @@ describe('functions create arrays of appropriate form to be fed into pg.format',
                     ['L287', 'Mickey', 'coolavatar.org']]
         const actual = userFormat(input)
 
-        expected(actual).toEqual(expected)
+        expect(actual).toEqual(expected)
 
     })
 
