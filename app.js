@@ -5,7 +5,9 @@ const { invalidEndpoint,
 const { getCategories,
         getReview,
         patchReview,
-        getReviews } = require('./controllers/games.controller.js')
+        getReviews,
+        getCommentsByReviewId,
+        postCommentToReview } = require('./controllers/games.controller.js')
 
 const app = express()
 
@@ -20,10 +22,16 @@ app.get('/api/reviews/:review_id', getReview)
 // modifies the total votes on a review
 app.patch('/api/reviews/:review_id', patchReview)
 
-// returns list of all revies
+// returns list of all reviews
 app.get('/api/reviews', getReviews)
 
-app.all("*", invalidEndpoint)
+// return list of all comments on a review
+app.get('/api/reviews/:review_id/comments', getCommentsByReviewId)
+
+// posts comment to a review
+app.post('/api/reviews/:review_id/comments', postCommentToReview)
+
+app.all('*', invalidEndpoint)
 
 app.use(handlesCustomErrors)
 

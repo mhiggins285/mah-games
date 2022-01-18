@@ -319,7 +319,7 @@ describe('/api/reviews/:review_id', () => {
 
 })
 
-describe.only('/api/reviews', () => {
+describe('/api/reviews', () => {
 
     describe('GET', () => {
 
@@ -506,6 +506,172 @@ describe.only('/api/reviews', () => {
 
                         })
 
+        })
+
+    })
+
+})
+
+describe('/api/reviews/:review_id/comments', () => {
+
+    describe('GET', () => {
+
+        test('returns an array of comments for a given review containing required properties', () => {
+            
+            return request(app)
+                    .get('/api/reviews/2/comments')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.comments.length).toBe(3)
+
+                        res.body.comments.forEach((comment) => {
+
+                            expect(comment.review_id).toBe(2)
+
+                        })
+
+                    })
+
+        })
+
+        test('returns an error if review id does not exist', () => {
+
+            return request(app)
+                    .get('/api/reviews/999/comments')
+                    .expect(404)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+        test('does not return an error if a review does exist but it has no associated comments', () => {
+
+            return request(app)
+                    .get('/api/reviews/5/comments')
+                    .expect(200)
+
+        })
+
+    })
+
+    describe('POST', () => {
+
+        test('adds comment to the database', () => {
+
+            return request(app)
+                    .post('/api/reviews/5/comments')
+                    .send({ user: 'bainesface',
+                            body: 'I disagree' })
+                    .expect(201)
+                    .then((res) => {
+
+                        const { comment } = res.body
+
+                        expect(comment.body).toBe('I disagree')
+                        expect(comment.votes).toBe(0)
+                        expect(comment.author).toBe('bainesface')
+                        expect(new Date(comment.created_at)).toEqual(expect.any(Date))
+                        expect(comment.comment_id).toEqual(expect.any(Number))
+                        
+                    })
+
+
+        })
+
+        test('return an error when review id does not exist', () => {
+
+            return request(app)
+                    .post('/api/reviews/999/comments')
+                    .send({ user: 'bainesface',
+                            body: 'I disagree' })
+                    .expect(404)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+        test('return an error when comment does not have body field', () => {
+
+            return request(app)
+                    .post('/api/reviews/5/comments')
+                    .send({ user: 'bainesface',
+                            budy: 'I disagree' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when comment does not have user field', () => {
+
+            return request(app)
+                    .post('/api/reviews/5/comments')
+                    .send({ uter: 'bainesface',
+                            body: 'I disagree' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when username does not exist', () => {
+
+            return request(app)
+                    .post('/api/reviews/5/comments')
+                    .send({ user: 'L285',
+                            body: 'I disagree' })
+                    .expect(404)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('User does not exist')
+
+                    })
+            
+        })
+
+        test('return an error when body is empty', () => {
+
+            return request(app)
+                    .post('/api/reviews/5/comments')
+                    .send({ user: 'bainesface',
+                            body: '' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when body is too long', () => {
+
+            const longBody = 'a'.repeat(4000)
+
+            return request(app)
+                    .post('/api/reviews/5/comments')
+                    .send({ user: 'bainesface',
+                            body: longBody })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
         })
 
     })

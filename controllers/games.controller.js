@@ -1,12 +1,17 @@
 const { selectCategories,
         selectReview,
         updateReview,
-        selectReviews } = require('../models/games.model.js')
+        selectReviews,
+        selectCommentsByReviewId,
+        insertComment } = require('../models/games.model.js')
+
 const { checkInteger } = require('../utils/checkInteger.js')
 
 const { checkReviewExists } = require('../utils/checkReviewExists.js') 
 
-exports.getCategories = (req, res) => {
+const { checkUserExists } = require('../utils/checkUserExists.js')
+
+exports.getCategories = (req, res, next) => {
 
     return selectCategories()
         .then(( categories ) => {
@@ -67,7 +72,7 @@ exports.patchReview = (req, res, next) => {
 
             if (!isIncVotesInteger) {
 
-                return Promise.reject({ status: 400, message: 'Bad request'})
+                return Promise.reject({ status: 400, message: 'Bad request' })
 
             }
 
@@ -101,6 +106,74 @@ exports.getReviews = (req, res, next) => {
             })
 
             res.status(200).send({reviews})
+
+        })
+        .catch(next)
+
+}
+
+exports.getCommentsByReviewId = (req, res, next) => {
+
+    const { review_id } = req.params
+
+    return checkReviewExists(review_id)
+        .then((doesReviewExist) => {
+
+            if (!doesReviewExist) {
+
+                return Promise.reject({ status: 404, message: 'Review does not exist' })
+
+            }
+
+            return selectCommentsByReviewId(review_id)
+
+        })
+        .then((comments) => {
+
+            res.status(200).send({ comments })
+
+        })
+        .catch(next)
+
+}
+
+exports.postCommentToReview = (req, res, next) => {
+
+    const { review_id } = req.params
+    const { user, body } = req.body
+
+    if (body === undefined || user === undefined || body === '' || body.length > 1000) {
+        
+        res.status(400).send({ message: 'Bad request' })
+
+    }
+
+    return checkReviewExists(review_id)
+        .then((doesReviewExist) => {
+
+            if (!doesReviewExist) {
+
+                return Promise.reject({ status: 404, message: 'Review does not exist' })
+
+            }
+
+            return checkUserExists(user)
+
+        })
+        .then((doesUserExist) => {
+
+            if (!doesUserExist) {
+
+                return Promise.reject({ status: 404, message: 'User does not exist' })
+
+            }
+
+            return insertComment(review_id, user, body)
+
+        })
+        .then((comment) => {
+
+            res.status(201).send({ comment })
 
         })
         .catch(next)

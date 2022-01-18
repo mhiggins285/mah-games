@@ -80,14 +80,40 @@ exports.selectReviews = async (sortQuery, orderQuery, categoryQuery) => {
     }
 
     const query = `SELECT reviews.review_id, reviews.title, reviews.designer, reviews.review_img_url, reviews.owner, reviews.review_body, reviews.category, reviews.created_at, reviews.votes, COUNT(comments.comment_id) AS comment_count FROM reviews
-                        FULL JOIN comments
-                        ON reviews.review_id = comments.review_id
-                        ${conditionalLine}
-                        GROUP BY reviews.review_id
-                        ORDER BY ${sortQuery} ${orderQuery};`
+                    FULL JOIN comments
+                    ON reviews.review_id = comments.review_id
+                    ${conditionalLine}
+                    GROUP BY reviews.review_id
+                    ORDER BY ${sortQuery} ${orderQuery};`
 
     const response = await db.query(query)
 
     return response.rows
+
+}
+
+exports.selectCommentsByReviewId = async (review_id) => {
+
+    const query = `SELECT * FROM comments
+                    WHERE review_id = $1;`
+
+    const response = await db.query(query, [review_id])
+
+    return response.rows
+
+}
+
+exports.insertComment = async (review_id, user, body) => {
+
+    const query = `INSERT INTO comments
+                    (review_id, author, body)
+                    VALUES
+                    ($1, $2, $3)
+                    RETURNING *;`
+    const queryParams = [review_id, user, body]
+
+    const response = await db.query(query, queryParams)
+
+    return response.rows[0]
 
 }
