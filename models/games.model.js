@@ -47,6 +47,9 @@ exports.updateReview = async ( review_id, inc_votes ) => {
 
 exports.selectReviews = async (sortQuery, orderQuery, categoryQuery) => {
 
+    const validSortQueries = ['review_id', 'title', 'designer', 'owner', 'review_body', 'category', 'created_at', 'votes']
+    const validOrderQueries = ['asc', 'desc']
+
     if (sortQuery === undefined && orderQuery === undefined) {
 
         sortQuery = 'created_at'
@@ -59,6 +62,12 @@ exports.selectReviews = async (sortQuery, orderQuery, categoryQuery) => {
     } else if (orderQuery === undefined) {
 
         orderQuery = 'asc'
+
+    }
+
+    if (!validSortQueries.includes(sortQuery) || !validOrderQueries.includes(orderQuery)) {
+
+        return Promise.reject({ status: 400, message: 'Bad request' })
 
     }
 

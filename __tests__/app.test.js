@@ -469,6 +469,45 @@ describe.only('/api/reviews', () => {
 
         })
 
+        test('returns error if invalid sort_by query is inputted', () => {
+
+            return request(app)
+                        .get('/api/reviews?sort_by=salary')
+                        .expect(400)
+                        .then((res) => {
+
+                            expect(res.body.message).toBe('Bad request')
+
+                        })
+
+        })
+
+        test('return error if invalid order query is inputted', () => {
+
+            return request(app)
+                        .get('/api/reviews?order=alternating')
+                        .expect(400)
+                        .then((res) => {
+
+                            expect(res.body.message).toBe('Bad request')
+
+                        })
+
+        })
+
+        test('does not return error if queries result in an empty response', () => {
+
+            return request(app)
+                        .get('/api/reviews?category=strategy')
+                        .expect(200)
+                        .then((res) => {
+
+                            expect(res.body.reviews).toEqual([])
+
+                        })
+
+        })
+
     })
 
 })
