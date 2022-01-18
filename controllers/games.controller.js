@@ -85,7 +85,13 @@ exports.patchReview = (req, res, next) => {
 
 exports.getReviews = (req, res, next) => {
 
-    return selectReviews()
+    const sortQuery = req.query.sort_by
+
+    const orderQuery = req.query.order
+
+    const categoryQuery = req.query.category
+
+    return selectReviews(sortQuery, orderQuery, categoryQuery)
         .then((reviews) => {
 
             reviews.forEach((review) => {

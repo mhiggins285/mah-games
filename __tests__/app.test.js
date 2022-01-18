@@ -392,6 +392,83 @@ describe.only('/api/reviews', () => {
 
         })
 
+        test('defaults to sorting entries by date', () => {
+
+            return request(app)
+                        .get('/api/reviews')
+                        .expect(200)
+                        .then((res) => {
+
+                            expect(res.body.reviews).toBeSortedBy('created_at', { descending: true })  
+
+                        })
+
+        })
+
+        test('can be sorted by other fields based on query', () => {
+
+            return request(app)
+                        .get('/api/reviews?sort_by=votes')
+                        .expect(200)
+                        .then((res) => {
+
+                            expect(res.body.reviews).toBeSortedBy('votes', { descending: false })  
+
+                        })
+
+        })
+
+        test('can be sorted in ascending or descending order based on query', () => {
+
+            return request(app)
+                        .get('/api/reviews?sort_by=designer&order=desc')
+                        .expect(200)
+                        .then((res) => {
+
+                            expect(res.body.reviews).toBeSortedBy('designer', { descending: true })  
+
+                        })
+
+        })
+
+        test('can be filtered by category based on query', () => {
+
+            return request(app)
+                        .get('/api/reviews?category=dexterity')
+                        .expect(200)
+                        .then((res) => {
+
+                            res.body.reviews.forEach((review) => {
+
+                                expect(review.category).toBe('dexterity')
+
+                            })
+
+                        })
+
+
+        })
+
+        test('all three of the above queries can be applied simultaneously', () => {
+
+            return request(app)
+                        .get('/api/reviews?sort_by=owner&order=desc&category=social_deduction')
+                        .expect(200)
+                        .then((res) => {
+
+                            expect(res.body.reviews).toBeSortedBy('owner', { descending: true })  
+
+                            res.body.reviews.forEach((review) => {
+
+                                expect(review.category).toBe('social deduction')
+
+                            })
+
+                        })
+
+
+        })
+
     })
 
 })

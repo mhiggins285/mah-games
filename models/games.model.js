@@ -45,13 +45,37 @@ exports.updateReview = async ( review_id, inc_votes ) => {
 
 }
 
-exports.selectReviews = async () => {
+exports.selectReviews = async (sortQuery, orderQuery, categoryQuery) => {
+
+    if (sortQuery === undefined && orderQuery === undefined) {
+
+        sortQuery = 'created_at'
+        orderQuery = 'desc'
+
+    } else if (sortQuery === undefined) {
+
+        sortQuery = 'created_at'
+
+    } else if (orderQuery === undefined) {
+
+        orderQuery = 'asc'
+
+    }
+
+    let conditionalLine = ''
+
+    if (categoryQuery) {
+
+        conditionalLine = `WHERE reviews.category = '${categoryQuery}'`
+
+    }
 
     const query = `SELECT reviews.review_id, reviews.title, reviews.designer, reviews.review_img_url, reviews.owner, reviews.review_body, reviews.category, reviews.created_at, reviews.votes, COUNT(comments.comment_id) AS comment_count FROM reviews
                         FULL JOIN comments
                         ON reviews.review_id = comments.review_id
-                        GROUP BY reviews.review_id;`
-
+                        ${conditionalLine}
+                        GROUP BY reviews.review_id
+                        ORDER BY ${sortQuery} ${orderQuery};`
 
     const response = await db.query(query)
 

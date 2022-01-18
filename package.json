@@ -18,6 +18,9 @@
   "bugs": {
     "url": "https://github.com/northcoders/be-nc-games/issues"
   },
+  "jest": {
+    "setupFilesAfterEnv": ["jest-sorted"]
+  },
   "homepage": "https://github.com/northcoders/be-nc-games#readme",
   "dependencies": {
     "dotenv": "^14.1.0",
@@ -27,6 +30,7 @@
   },
   "devDependencies": {
     "jest": "^27.4.7",
-    "supertest": "^6.2.1"
+    "supertest": "^6.2.1",
+    "jest-sorted": "^1.0.14"
   }
 }
