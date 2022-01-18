@@ -3,13 +3,16 @@ const { selectCategories,
         updateReview,
         selectReviews,
         selectCommentsByReviewId,
-        insertComment } = require('../models/games.model.js')
+        insertComment,
+        deleteCommentFrom } = require('../models/games.model.js')
 
 const { checkInteger } = require('../utils/checkInteger.js')
 
 const { checkReviewExists } = require('../utils/checkReviewExists.js') 
 
 const { checkUserExists } = require('../utils/checkUserExists.js')
+
+const { checkCommentExists } = require('../utils/checkCommentExists.js')
 
 exports.getCategories = (req, res, next) => {
 
@@ -146,9 +149,9 @@ exports.postCommentToReview = (req, res, next) => {
         
         res.status(400).send({ message: 'Bad request' })
 
-    }
+    } else {
 
-    return checkReviewExists(review_id)
+        return checkReviewExists(review_id)
         .then((doesReviewExist) => {
 
             if (!doesReviewExist) {
@@ -174,6 +177,35 @@ exports.postCommentToReview = (req, res, next) => {
         .then((comment) => {
 
             res.status(201).send({ comment })
+
+        })
+        .catch(next)
+
+    }
+
+    
+
+}
+
+exports.deleteComment = (req, res, next) => {
+
+    const { comment_id } = req.params
+
+    return checkCommentExists(comment_id)
+        .then((doesCommentExist) => {
+
+            if (!doesCommentExist) {
+
+                return Promise.reject({ status: 404, message: 'Comment does not exist' })
+
+            }
+
+            return deleteCommentFrom(comment_id)
+
+        })
+        .then(() => {
+
+            res.status(204).send({})
 
         })
         .catch(next)

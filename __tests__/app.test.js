@@ -677,3 +677,47 @@ describe('/api/reviews/:review_id/comments', () => {
     })
 
 })
+
+describe('/api/comments/:comment_id', () => {
+
+    describe('DELETE', () => {
+
+        test('deletes comment from database and returns empty object', () => {
+
+            return request(app)
+                    .delete('/api/comments/3')
+                    .expect(204)
+                    .then((res) => {
+
+                        expect(res.body).toEqual({})
+
+                        const query = `SELECT * FROM comments
+                                        WHERE comment_id = 3;`
+
+                        return db.query(query)
+
+                    })
+                    .then((res) => {
+
+                        expect(res.rows).toEqual([])
+
+                    })
+
+        })
+
+        test('returns an error if the comment id does not exist', () => {
+
+            return request(app)
+                    .delete('/api/comments/999')
+                    .expect(404)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Comment does not exist')
+
+                    })
+
+        })
+
+    })
+
+})

@@ -117,3 +117,12 @@ exports.insertComment = async (review_id, user, body) => {
     return response.rows[0]
 
 }
+
+exports.deleteCommentFrom = async (comment_id) => {
+
+    const query = `DELETE FROM comments
+                    WHERE comment_id = $1;`
+
+    const response = await db.query(query, [comment_id])
+
+}
