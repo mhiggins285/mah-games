@@ -1,7 +1,10 @@
 const express = require("express")
-const { invalidEndpoint } = require('./controllers/errors.controller.js')
+const { invalidEndpoint, 
+        handlesCustomErrors, 
+        handlesUnspecifiedErrors } = require('./controllers/errors.controller.js')
 const { getCategories,
-        getReview } = require('./controllers/games.controller.js')
+        getReview,
+        patchReview } = require('./controllers/games.controller.js')
 
 const app = express()
 
@@ -13,21 +16,13 @@ app.get('/api/categories', getCategories)
 // returns review by review_id
 app.get('/api/reviews/:review_id', getReview)
 
+// modifies the total votes on a review
+app.patch('/api/reviews/:review_id', patchReview)
+
 app.all("*", invalidEndpoint)
 
-app.use((err, req, res, next) => {
+app.use(handlesCustomErrors)
 
-    if (err.status) {
-      res.status(err.status).send({ message: err.message })
-    } else {
-      next(err)
-    }
-})
-
-app.use((err, req, res, next) => {
-
-    res.status(500).send({ message: "Something went wrong" })
-
-})
+app.use(handlesUnspecifiedErrors)
 
 module.exports = app

@@ -1,6 +1,6 @@
 const db = require("../connection.js")
 const format = require("pg-format")
-const { categoryFormat, userFormat, reviewFormat, commentFormat } = require('../../seedFormatting.js')
+const { categoryFormat, userFormat, reviewFormat, commentFormat } = require('../../utils/seedFormatting.js')
 
 const seed = (data) => {
 

@@ -1,4 +1,4 @@
-const { categoryFormat, userFormat, reviewFormat, commentFormat } = require('../seedFormatting.js')
+const { categoryFormat, userFormat, reviewFormat, commentFormat } = require('../utils/seedFormatting.js')
 
 describe('functions create arrays of appropriate form to be fed into pg.format', () => {
 

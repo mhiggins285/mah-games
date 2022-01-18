@@ -208,7 +208,7 @@ describe('/api/review/:review_id', () => {
                     .expect(200)
                     .then((res) => {
 
-                        expect(res.body.review.comment_count).toBe('3')
+                        expect(res.body.review.comment_count).toBe(3)
 
                     })
 
@@ -222,6 +222,94 @@ describe('/api/review/:review_id', () => {
                     .then((res) => {
 
                         expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+    })
+
+    describe('PATCH', () => {
+
+        test('patch request can be used to change the vote count of a review by a specified value', () => {
+
+            return request(app)
+                    .patch('/api/reviews/2')
+                    .send({ inc_votes: 2 })
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.review.votes).toBe(7)
+
+                    })
+
+        })
+
+        test('patch request can be used to change the vote count of a review by negative values', () => {
+
+            return request(app)
+                    .patch('/api/reviews/3')
+                    .send({ inc_votes: -6 })
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.review.votes).toBe(-1)
+
+                    })
+
+        })
+
+        test('returns error when trying to patch review that does not exist', () => {
+
+            return request(app)
+                    .patch('/api/reviews/999')
+                    .send({ inc_votes: 1 })
+                    .expect(404)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+        test('returns error when body of request does not contain inc_votes property', () => {
+
+            return request(app)
+                    .patch('/api/reviews/4')
+                    .send({ ince_vote: 'Four' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
+        test('returns error when inc_votes value is not a number', () => {
+
+            return request(app)
+                    .patch('/api/reviews/4')
+                    .send({ inc_votes: 4.2 })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
+        test('returns error when inc_votes value is not an integer', () => {
+
+            return request(app)
+                    .patch('/api/reviews/4')
+                    .send({ ince_votes: 4 })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
 
                     })
 
