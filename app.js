@@ -8,7 +8,8 @@ const { getCategories,
         getReviews,
         getCommentsByReviewId,
         postCommentToReview,
-        deleteComment } = require('./controllers/games.controller.js')
+        deleteComment,
+        getEndpoints } = require('./controllers/games.controller.js')
 
 const app = express()
 
@@ -34,6 +35,9 @@ app.post('/api/reviews/:review_id/comments', postCommentToReview)
 
 // deletes comment
 app.delete('/api/comments/:comment_id', deleteComment)
+
+// returns list of available endpoints
+app.get('/api', getEndpoints)
 
 app.all('*', invalidEndpoint)
 

@@ -721,3 +721,39 @@ describe('/api/comments/:comment_id', () => {
     })
 
 })
+
+describe('/api', () => {
+
+    describe('GET', () => {
+
+        test('returns JSON containing available endpoints', () => {
+
+            return request(app)
+                    .get('/api')
+                    .expect(200)
+                    .then((res) => {
+
+                        const expected = {'nc-games': {
+                                            '/api/categories':
+                                                ['GET'],
+                                            '/api/reviews/:review_id':
+                                                ['GET', 'PATCH'],
+                                            '/api/reviews':
+                                                ['GET'],
+                                            '/api/reviews/:review_id/comments':
+                                                ['GET', 'POST'],
+                                            '/api/comments/:comment_id':
+                                                ['DELETE'],
+                                            '/api':
+                                                ['GET']
+                        }}
+
+                        expect(res.body).toEqual(expected)
+
+                    })
+
+        })
+
+    })
+
+})

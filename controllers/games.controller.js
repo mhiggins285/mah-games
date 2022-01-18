@@ -211,3 +211,24 @@ exports.deleteComment = (req, res, next) => {
         .catch(next)
 
 }
+
+exports.getEndpoints = (req, res, next) => {
+
+    const endpointObject = {'nc-games': {
+                                '/api/categories':
+                                    ['GET'],
+                                '/api/reviews/:review_id':
+                                    ['GET', 'PATCH'],
+                                '/api/reviews':
+                                    ['GET'],
+                                '/api/reviews/:review_id/comments':
+                                    ['GET', 'POST'],
+                                '/api/comments/:comment_id':
+                                    ['DELETE'],
+                                '/api':
+                                    ['GET']
+    }}
+
+    res.status(200).send(endpointObject)
+
+}
