@@ -4,7 +4,8 @@ const { invalidEndpoint,
         handlesUnspecifiedErrors } = require('./controllers/errors.controller.js')
 const { getCategories,
         getReview,
-        patchReview } = require('./controllers/games.controller.js')
+        patchReview,
+        getReviews } = require('./controllers/games.controller.js')
 
 const app = express()
 
@@ -18,6 +19,9 @@ app.get('/api/reviews/:review_id', getReview)
 
 // modifies the total votes on a review
 app.patch('/api/reviews/:review_id', patchReview)
+
+// returns list of all revies
+app.get('/api/reviews', getReviews)
 
 app.all("*", invalidEndpoint)
 

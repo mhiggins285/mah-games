@@ -44,3 +44,17 @@ exports.updateReview = async ( review_id, inc_votes ) => {
     return writeResponse.rows[0]
 
 }
+
+exports.selectReviews = async () => {
+
+    const query = `SELECT reviews.review_id, reviews.title, reviews.designer, reviews.review_img_url, reviews.owner, reviews.review_body, reviews.category, reviews.created_at, reviews.votes, COUNT(comments.comment_id) AS comment_count FROM reviews
+                        FULL JOIN comments
+                        ON reviews.review_id = comments.review_id
+                        GROUP BY reviews.review_id;`
+
+
+    const response = await db.query(query)
+
+    return response.rows
+
+}

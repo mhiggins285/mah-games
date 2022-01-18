@@ -1,6 +1,7 @@
 const { selectCategories,
         selectReview,
-        updateReview } = require('../models/games.model.js')
+        updateReview,
+        selectReviews } = require('../models/games.model.js')
 const { checkInteger } = require('../utils/checkInteger.js')
 
 const { checkReviewExists } = require('../utils/checkReviewExists.js') 
@@ -13,6 +14,7 @@ exports.getCategories = (req, res) => {
             res.status(200).send({ categories })
 
         })
+        .catch(next)
     
 }
 
@@ -75,6 +77,24 @@ exports.patchReview = (req, res, next) => {
         .then((review) => {
 
             res.status(200).send({ review })
+
+        })
+        .catch(next)
+
+}
+
+exports.getReviews = (req, res, next) => {
+
+    return selectReviews()
+        .then((reviews) => {
+
+            reviews.forEach((review) => {
+
+                review.comment_count = parseInt(review.comment_count)
+
+            })
+
+            res.status(200).send({reviews})
 
         })
         .catch(next)

@@ -174,7 +174,7 @@ describe('/api/categories', () => {
 
 })
 
-describe('/api/review/:review_id', () => {
+describe('/api/reviews/:review_id', () => {
 
     describe('GET', () => {
 
@@ -312,6 +312,83 @@ describe('/api/review/:review_id', () => {
                         expect(res.body.message).toBe('Bad request')
 
                     })
+
+        })
+
+    })
+
+})
+
+describe.only('/api/reviews', () => {
+
+    describe('GET', () => {
+
+        test('returns with an array of each review populated with properties from the review database', () => {
+
+            return request(app)
+                .get('/api/reviews')
+                .expect(200)
+                .then((res) => {
+
+                    expect(res.body.reviews.length).toBe(13)
+
+                    res.body.reviews.forEach((review) => {
+
+                        expect(review).toEqual(
+                        expect.objectContaining({
+
+                            review_id: expect.any(Number),
+                            title: expect.any(String),
+                            designer: expect.any(String),
+                            owner: expect.any(String),
+                            review_img_url: expect.any(String),
+                            review_body: expect.any(String),
+                            category: expect.any(String),
+                            votes: expect.any(Number)
+
+                        })
+                        )
+
+                        expect(new Date(review.created_at)).toEqual(expect.any(Date))
+
+                    })
+
+                })
+
+        })
+
+        test('each array has a comment count property', () => {
+
+            return request(app)
+                .get('/api/reviews')
+                .expect(200)
+                .then((res) => {
+
+                    res.body.reviews.forEach((review) => {
+
+                        expect(review).toEqual(
+                        expect.objectContaining({
+
+                            comment_count: expect.any(Number)
+
+                        })
+                        )
+
+                        if (review.review_id === 1) {
+
+                            expect(review.comment_count).toBe(0)
+
+                        }
+
+                        if (review.review_id === 3) {
+
+                            expect(review.comment_count).toBe(3)
+
+                        }
+
+                    })
+
+                })
 
         })
 
