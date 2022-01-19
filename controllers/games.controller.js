@@ -14,6 +14,8 @@ const { checkUserExists } = require('../utils/checkUserExists.js')
 
 const { checkCommentExists } = require('../utils/checkCommentExists.js')
 
+const fs = require('fs/promises')
+
 exports.getCategories = (req, res, next) => {
 
     return selectCategories()
@@ -147,7 +149,7 @@ exports.postCommentToReview = (req, res, next) => {
 
     if (body === undefined || user === undefined || body === '' || body.length > 1000) {
         
-        res.status(400).send({ message: 'Bad request' })
+        next({ status: 400, message: 'Bad request' })
 
     } else {
 
@@ -214,21 +216,11 @@ exports.deleteComment = (req, res, next) => {
 
 exports.getEndpoints = (req, res, next) => {
 
-    const endpointObject = {'nc-games': {
-                                '/api/categories':
-                                    ['GET'],
-                                '/api/reviews/:review_id':
-                                    ['GET', 'PATCH'],
-                                '/api/reviews':
-                                    ['GET'],
-                                '/api/reviews/:review_id/comments':
-                                    ['GET', 'POST'],
-                                '/api/comments/:comment_id':
-                                    ['DELETE'],
-                                '/api':
-                                    ['GET']
-    }}
+    return fs.readFile('endpoints.json', 'utf-8')
+        .then((endpoints) => {
 
-    res.status(200).send(endpointObject)
+            res.status(200).send(endpoints)
+
+        })
 
 }

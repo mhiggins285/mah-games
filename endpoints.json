@@ -4,7 +4,6 @@
   },
   "GET /api/categories": {
     "description": "serves an array of all categories",
-    "queries": [],
     "exampleResponse": {
       "categories": [
         {
@@ -12,6 +11,37 @@
           "slug": "Social deduction"
         }
       ]
+    }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves the review with the given review ID",
+    "exampleResponse": {
+      "review": {
+        "title": "One Night Ultimate Werewolf",
+        "designer": "Akihisa Okui",
+        "owner": "happyamy2016",
+        "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        "category": "hidden-roles",
+        "created_at": 1610964101251,
+        "votes": 5
+      }
+    }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "updates the votes value on the review with the given review ID by the inc_votes value in the request",
+    "exampleRequest": {
+      "inc_votes": 2
+    },
+    "exampleResponse": {
+      "review": {
+        "title": "One Night Ultimate Werewolf",
+        "designer": "Akihisa Okui",
+        "owner": "happyamy2016",
+        "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        "category": "hidden-roles",
+        "created_at": 1610964101251,
+        "votes": 7
+      }
     }
   },
   "GET /api/reviews": {
@@ -30,5 +60,41 @@
         }
       ]
     }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves the comments associated with the given review ID",
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "I loved this game too!",
+          "votes": 16,
+          "author": "bainesface",
+          "review_id": 2,
+          "created_at": 1511354613389
+        }
+      ]
+    }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "adds the requested comment to the database",
+    "exampleRequest": {
+      "user": "dav3rid",
+      "body": "I'm indifferent to this game"
+    },
+    "exampleResponse": {
+      "comment": [
+        {
+          "body": "I'm indifferent to this game",
+          "votes": 0,
+          "author": "dav3rid",
+          "review_id": 4,
+          "created_at": 1642585898453
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deleted comment with given comment ID from the database",
+    "exampleResponse": {}
   }
 }

@@ -3,6 +3,8 @@ const testData = require('../db/data/test-data/index.js');
 const seed = require('../db/seeds/seed.js');
 const app = require('../app.js')
 const request = require('supertest')
+const fs = require('fs/promises')
+
 
 beforeEach(() => seed(testData));
 afterAll(() => db.end());
@@ -728,27 +730,16 @@ describe('/api', () => {
 
         test('returns JSON containing available endpoints', () => {
 
-            return request(app)
+            const requestPromise = request(app)
                     .get('/api')
                     .expect(200)
-                    .then((res) => {
 
-                        const expected = {'nc-games': {
-                                            '/api/categories':
-                                                ['GET'],
-                                            '/api/reviews/:review_id':
-                                                ['GET', 'PATCH'],
-                                            '/api/reviews':
-                                                ['GET'],
-                                            '/api/reviews/:review_id/comments':
-                                                ['GET', 'POST'],
-                                            '/api/comments/:comment_id':
-                                                ['DELETE'],
-                                            '/api':
-                                                ['GET']
-                        }}
+            const readFilePromise = fs.readFile('endpoints.json', 'utf-8')
 
-                        expect(res.body).toEqual(expected)
+            return Promise.all([requestPromise, readFilePromise])
+                    .then(([res, endpoints]) => {
+
+                        expect(res.text).toEqual(endpoints)
 
                     })
 
