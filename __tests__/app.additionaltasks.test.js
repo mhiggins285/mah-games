@@ -19,11 +19,11 @@ describe('/api/users', () => {
                     .expect(200)
                     .then((res) => {
 
-                        expect(res.body.categories.length).toBe(4)
+                        expect(res.body.users.length).toBe(4)
 
-                        res.body.categories.forEach((category) => {
+                        res.body.users.forEach((user) => {
 
-                            expect(category).toEqual(
+                            expect(user).toEqual(
                             expect.objectContaining({
 
                                 username: expect.any(String)
@@ -86,7 +86,7 @@ describe('/api/comments/:comment_id', () => {
         test('patch request can be used to change the vote count of a comment by a specified value', () => {
 
             return request(app)
-                    .patch('/api/comments/2')
+                    .patch('/api/comments/1')
                     .send({ inc_votes: 2 })
                     .expect(200)
                     .then((res) => {

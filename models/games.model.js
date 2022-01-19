@@ -123,6 +123,45 @@ exports.deleteCommentFrom = async (comment_id) => {
     const query = `DELETE FROM comments
                     WHERE comment_id = $1;`
 
-    const response = await db.query(query, [comment_id])
+    await db.query(query, [comment_id])
+
+}
+
+exports.selectUsers = async () => {
+
+    const response = await db.query('SELECT username FROM users;')
+
+    return response.rows
+
+}
+
+exports.selectUserByUsername = async (username) => {
+
+    const query = `SELECT * FROM users 
+                    WHERE username = $1;`
+
+    const response = await db.query(query, [username])
+
+    return response.rows[0]
+
+}
+
+exports.updateComment = async ( comment_id, inc_votes ) => {
+
+    const readQuery = `SELECT * FROM comments
+                    WHERE comment_id = $1;`
+    const writeQuery = `UPDATE comments
+                    SET votes = $1
+                    WHERE comment_id = $2
+                    RETURNING *;`
+
+    const readResponse = await db.query(readQuery, [comment_id])
+
+    const oldVotes = readResponse.rows[0].votes
+    const newVotes = oldVotes + inc_votes
+
+    const writeResponse = await db.query(writeQuery, [newVotes, comment_id])
+
+    return writeResponse.rows[0]
 
 }

@@ -4,7 +4,10 @@ const { selectCategories,
         selectReviews,
         selectCommentsByReviewId,
         insertComment,
-        deleteCommentFrom } = require('../models/games.model.js')
+        deleteCommentFrom,
+        selectUsers,
+        selectUserByUsername,
+        updateComment } = require('../models/games.model.js')
 
 const { checkInteger } = require('../utils/checkInteger.js')
 
@@ -222,5 +225,79 @@ exports.getEndpoints = (req, res, next) => {
             res.status(200).send(endpoints)
 
         })
+
+}
+
+exports.getUsers = (req, res, next) => {
+
+    return selectUsers()
+        .then((users) => {
+
+            res.status(200).send({ users })
+
+        })
+        .catch(next)
+
+}
+
+exports.getUserByUsername = (req, res, next) => {
+
+    const { username } = req.params
+
+    return checkUserExists(username)
+        .then((doesUserExist) => {
+
+            if (!doesUserExist) {
+
+                return Promise.reject({ status: 404, message: 'User does not exist' })
+                
+            }
+
+            return selectUserByUsername(username)
+
+        })
+        .then((user) => {
+
+            res.status(200).send({ user })
+
+        })
+        .catch(next)
+
+}
+
+exports.patchComment = (req, res, next) => {
+
+    const { comment_id } = req.params
+    const { inc_votes } = req.body
+
+    return checkCommentExists(comment_id)
+        .then((doesCommentExist) => {
+
+            if (!doesCommentExist) {
+
+                return Promise.reject({ status: 404, message: "Comment does not exist" })
+
+            }
+
+            return checkInteger(inc_votes)
+
+        })
+        .then((isIncVotesInteger) => {
+
+            if (!isIncVotesInteger) {
+
+                return Promise.reject({ status: 400, message: 'Bad request' })
+
+            }
+
+            return updateComment(comment_id, inc_votes)
+
+        })
+        .then((comment) => {
+
+            res.status(200).send({ comment })
+
+        })
+        .catch(next)
 
 }
