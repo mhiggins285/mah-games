@@ -1,4 +1,4 @@
 node_modules
 .env.*
 README-nc.md
-db/setup.sql
+setup.sql
