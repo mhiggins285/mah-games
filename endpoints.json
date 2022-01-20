@@ -13,6 +13,30 @@
       ]
     }
   },
+  "GET /api/users": {
+    "description": "serves an array of the usernames of all the users",
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "bainesface"
+        },
+        {
+          "username": "mallionaire"
+        }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves the user with the given username",
+    "exampleResponse": {
+      "user": {
+        "username": "mallionaire",
+        "name": "haz",
+        "avatar_url":
+          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }
+    }
+  },
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
     "queries": ["category", "sort_by", "order"],
@@ -62,7 +86,7 @@
     }
   },
   "GET /api/reviews/:review_id/comments": {
-    "description": "serves the comments associated with the given review ID",
+    "description": "serves an array of all the comments associated with the given review ID",
     "exampleResponse": {
       "comments": [
         {
@@ -91,6 +115,21 @@
           "created_at": 1642585898453
         }
       ]
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the votes value on the comment with the given comment ID by the inc_votes value in the request",
+    "exampleRequest": {
+      "inc_votes": 2
+    },
+    "exampleResponse": {
+      "comment": {
+        "body": "I loved this game too!",
+        "votes": 18,
+        "author": "bainesface",
+        "review_id": 2,
+        "created_at": 1511354613389
+      }
     }
   },
   "DELETE /api/comments/:comment_id": {

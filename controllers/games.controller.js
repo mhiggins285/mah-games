@@ -150,9 +150,13 @@ exports.postCommentToReview = (req, res, next) => {
     const { review_id } = req.params
     const { user, body } = req.body
 
-    if (body === undefined || user === undefined || body === '' || body.length > 1000) {
+    if (body === undefined || user === undefined || body === '') {
         
         next({ status: 400, message: 'Bad request' })
+
+    } else if (body.length > 1000) {
+
+        next({ status: 400, message: 'Comment body too long' })
 
     } else {
 
@@ -172,7 +176,7 @@ exports.postCommentToReview = (req, res, next) => {
 
             if (!doesUserExist) {
 
-                return Promise.reject({ status: 404, message: 'User does not exist' })
+                return Promise.reject({ status: 422, message: 'User does not exist' })
 
             }
 
@@ -187,9 +191,7 @@ exports.postCommentToReview = (req, res, next) => {
         .catch(next)
 
     }
-
     
-
 }
 
 exports.deleteComment = (req, res, next) => {

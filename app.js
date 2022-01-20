@@ -1,6 +1,7 @@
 const express = require("express")
 
-const { invalidEndpoint, 
+const { checksMethodNotAllowed,
+        handlesInvalidEndpoint, 
         handlesCustomErrors, 
         handlesUnspecifiedErrors } = require('./controllers/errors.controller.js')
         
@@ -53,10 +54,16 @@ app.patch('/api/comments/:comment_id', patchComment)
 // deletes comment
 app.delete('/api/comments/:comment_id', deleteComment)
 
-app.all('*', invalidEndpoint)
+// returns error if endpoint exists but method not allowed
+app.use(checksMethodNotAllowed)
 
+// returns error if endpoint doesn't exist
+app.all('*', handlesInvalidEndpoint)
+
+// handles custom errors created in controller/model
 app.use(handlesCustomErrors)
 
+// handles other errors
 app.use(handlesUnspecifiedErrors)
 
 module.exports = app

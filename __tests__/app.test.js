@@ -125,7 +125,7 @@ describe('*', () => {
 
     describe('all', () => {
 
-        test('returns 404 error when a request is made to a non-existent endpoint', () => {
+        test('returns error when a request is made to a non-existent endpoint', () => {
 
             return request(app)
                     .get('/api/cars')
@@ -216,7 +216,7 @@ describe('/api/reviews/:review_id', () => {
 
         })
 
-        test('returns 404 error when review_id that does not exist is entered', () => {
+        test('returns error when review_id that does not exist is entered', () => {
 
             return request(app)
                     .get('/api/reviews/999')
@@ -279,7 +279,7 @@ describe('/api/reviews/:review_id', () => {
 
             return request(app)
                     .patch('/api/reviews/4')
-                    .send({ ince_vote: 'Four' })
+                    .send({ ince_vote: 4 })
                     .expect(400)
                     .then((res) => {
 
@@ -293,7 +293,7 @@ describe('/api/reviews/:review_id', () => {
 
             return request(app)
                     .patch('/api/reviews/4')
-                    .send({ inc_votes: 4.2 })
+                    .send({ inc_votes: 'Four' })
                     .expect(400)
                     .then((res) => {
 
@@ -307,7 +307,7 @@ describe('/api/reviews/:review_id', () => {
 
             return request(app)
                     .patch('/api/reviews/4')
-                    .send({ ince_votes: 4 })
+                    .send({ inc_votes: 4.2 })
                     .expect(400)
                     .then((res) => {
 
@@ -635,7 +635,7 @@ describe('/api/reviews/:review_id/comments', () => {
                     .post('/api/reviews/5/comments')
                     .send({ user: 'L285',
                             body: 'I disagree' })
-                    .expect(404)
+                    .expect(422)
                     .then((res) => {
 
                         expect(res.body.message).toBe('User does not exist')
@@ -670,7 +670,7 @@ describe('/api/reviews/:review_id/comments', () => {
                     .expect(400)
                     .then((res) => {
 
-                        expect(res.body.message).toBe('Bad request')
+                        expect(res.body.message).toBe('Comment body too long')
 
                     })
             
@@ -740,6 +740,27 @@ describe('/api', () => {
                     .then(([res, endpoints]) => {
 
                         expect(res.text).toEqual(endpoints)
+
+                    })
+
+        })
+
+    })
+
+})
+
+describe('all existing endpoints', () => {
+
+    describe('any unpermitted method', () => {
+
+        test('specific error returned if endpoint exists but method is not allowed', () => {
+
+            return request(app)
+                    .patch('/api/categories')
+                    .expect(405)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Method not allowed')
 
                     })
 
