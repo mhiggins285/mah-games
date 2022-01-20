@@ -7,7 +7,10 @@ const { selectCategories,
         deleteCommentFrom,
         selectUsers,
         selectUserByUsername,
-        updateComment } = require('../models/games.model.js')
+        updateComment,
+        insertCategory,
+        insertReview,
+        deleteReviewFrom } = require('../models/games.model.js')
 
 const { checkInteger } = require('../utils/checkInteger.js')
 
@@ -16,6 +19,8 @@ const { checkReviewExists } = require('../utils/checkReviewExists.js')
 const { checkUserExists } = require('../utils/checkUserExists.js')
 
 const { checkCommentExists } = require('../utils/checkCommentExists.js')
+
+const { checkCategoryExists } = require('../utils/checkCategoryExists.js')
 
 const fs = require('fs/promises')
 
@@ -102,7 +107,13 @@ exports.getReviews = (req, res, next) => {
 
     const orderQuery = req.query.order
 
-    const categoryQuery = req.query.category
+    let categoryQuery = req.query.category
+
+    if (categoryQuery !== undefined) {
+
+        categoryQuery = categoryQuery.replace(/_/g, ' ')
+
+    }
 
     return selectReviews(sortQuery, orderQuery, categoryQuery)
         .then((reviews) => {
@@ -303,3 +314,125 @@ exports.patchComment = (req, res, next) => {
         .catch(next)
 
 }
+
+exports.postCategory = (req, res, next) => {
+
+    const { slug, description } = req.body
+
+    if (slug === undefined || description === undefined || slug === '' || description === '') {
+        
+        next({ status: 400, message: 'Bad request' })
+
+    } else if (description.length > 1000) {
+
+        next({ status: 400, message: 'Description too long' })
+
+    } else if (slug.length > 50) {
+
+        next({ status: 400, message: 'Category name too long' })
+
+    } else {
+
+        return checkCategoryExists(slug)
+        .then((doesCategoryExist) => {
+
+            if (doesCategoryExist) {
+
+                return Promise.reject({ status: 422, message: 'Category already exists' })
+
+            }
+
+            return insertCategory(slug, description)
+
+        })
+        .then((category) => {
+
+            res.status(201).send({ category })
+
+        })
+        .catch(next)
+
+    }
+
+}
+
+exports.postReview = (req, res, next) => {
+
+    const { title, owner, review_body, designer, category } = req.body
+
+    if (title === undefined || owner === undefined || review_body === undefined || designer === undefined || category === undefined || title === '' || review_body === '' || designer === '' ) {
+        
+        next({ status: 400, message: 'Bad request' })
+
+    } else if (title.length > 200) {
+
+        next({ status: 400, message: 'Title too long' })
+
+    } else if (review_body.length > 2000) {
+
+        next({ status: 400, message: 'Review body too long' })
+
+    } else if (designer.length > 50) {
+
+        next({ status: 400, message: 'Designer name too long' })
+
+    } else {
+
+        return checkUserExists(owner)
+        .then((doesUserExist) => {
+
+            if (!doesUserExist) {
+
+                return Promise.reject({ status: 422, message: 'User does not exist' })
+
+            }
+
+            return checkCategoryExists(category)
+
+        })
+        .then((doesCategoryExist) => {
+
+            if (!doesCategoryExist) {
+
+                return Promise.reject({ status: 422, message: 'Category does not exist' })
+
+            }
+
+            return insertReview(title, owner, review_body, designer, category)
+
+        })
+        .then((review) => {
+
+            res.status(201).send({ review })
+
+        })
+        .catch(next)
+
+    }
+
+}
+
+// exports.deleteReview = (req, res, next) => {
+
+//     const { review_id } = req.params
+
+//     return checkReviewExists(review_id)
+//         .then((doesReviewExist) => {
+
+//             if (!doesReviewExist) {
+
+//                 return Promise.reject({ status: 404, message: 'Review does not exist' })
+
+//             }
+
+//             return deleteReviewFrom(review_id)
+
+//         })
+//         .then(() => {
+
+//             res.status(204).send({})
+
+//         })
+//         .catch(next)
+
+// }

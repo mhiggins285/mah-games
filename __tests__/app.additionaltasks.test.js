@@ -170,3 +170,477 @@ describe('/api/comments/:comment_id', () => {
     })
 
 })
+
+describe('/api/reviews', () => {
+
+    describe('POST', () => {
+
+        test('adds review to the database', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                            title: 'Ball and cup',
+                            review_body: 'Hours of mindless fun',
+                            designer: 'Johnny Ball',
+                            category: 'dexterity' })
+                    .expect(201)
+                    .then((res) => {
+
+                        const { review } = res.body
+
+                        expect(review.review_id).toEqual(expect.any(Number))
+                        expect(review.owner).toBe('bainesface')
+                        expect(review.title).toBe('Ball and cup')
+                        expect(review.review_body).toBe('Hours of mindless fun')
+                        expect(review.designer).toBe('Johnny Ball')
+                        expect(review.category).toBe('dexterity')
+                        expect(review.votes).toBe(0)
+                        expect(new Date(review.created_at)).toEqual(expect.any(Date))
+                        expect(review.comment_count).toBe(0)
+                        
+                    })
+
+
+        })
+
+        test('return an error when review does not have owner field', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ user: 'bainesface',
+                        title: 'Ball and cup',
+                        review_body: 'Hours of mindless fun',
+                        designer: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when review does not have title field', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        tidle: 'Ball and cup',
+                        review_body: 'Hours of mindless fun',
+                        designer: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when review does not have review_body field', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: 'Ball and cup',
+                        reviewb_ody: 'Hours of mindless fun',
+                        designer: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when review does not have designer field', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: 'Ball and cup',
+                        review_body: 'Hours of mindless fun',
+                        desiner: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when review does not have category field', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: 'Ball and cup',
+                        review_body: 'Hours of mindless fun',
+                        designer: 'Johnny Ball',
+                        caregory: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when username does not exist', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'L285',
+                        title: 'Ball and cup',
+                        review_body: 'Hours of mindless fun',
+                        designer: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(422)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('User does not exist')
+
+                    })
+            
+        })
+
+        test('return an error when category does not exist', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: 'Ball and cup',
+                        review_body: 'Hours of mindless fun',
+                        designer: 'Johnny Ball',
+                        category: 'physical' })
+                    .expect(422)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Category does not exist')
+
+                    })
+            
+        })
+
+        test('return an error when title is empty', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: '',
+                        review_body: 'Hours of mindless fun',
+                        designer: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when review body is empty', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: 'Ball and cup',
+                        review_body: '',
+                        designer: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when designer is empty', () => {
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: 'Ball and cup',
+                        review_body: 'Hours of mindless fun',
+                        designer: '',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when title is too long', () => {
+
+            const longTitle = 'a'.repeat(300)
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: longTitle,
+                        review_body: 'Hours of mindless fun',
+                        designer: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Title too long')
+
+                    })
+            
+        })
+
+        test('return an error when body is too long', () => {
+
+            const longBody = 'a'.repeat(4000)
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: 'Ball and cup',
+                        review_body: longBody,
+                        designer: 'Johnny Ball',
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Review body too long')
+
+                    })
+            
+        })
+
+        test('return an error when designer is too long', () => {
+
+            const longDesigner = 'a'.repeat(70)
+
+            return request(app)
+                    .post('/api/reviews')
+                    .send({ owner: 'bainesface',
+                        title: 'Ball and cup',
+                        review_body: 'Hours of mindless fun',
+                        designer: longDesigner,
+                        category: 'dexterity' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Designer name too long')
+
+                    })
+            
+        })
+
+    })
+
+    // describe('GET', () => {
+
+
+        
+    // })
+
+})
+
+describe('/api/categories', () => {
+
+    describe('POST', () => {
+
+        test('adds category to the database', () => {
+
+            return request(app)
+                    .post('/api/categories')
+                    .send({ slug: 'strategy',
+                            description: 'games that require tactical and strategic thinking to win' })
+                    .expect(201)
+                    .then((res) => {
+
+                        const { category } = res.body
+
+                        expect(category.slug).toBe('strategy')
+                        expect(category.description).toBe('games that require tactical and strategic thinking to win')
+                        
+                    })
+
+
+        })
+
+        test('return an error when category does not have slug field', () => {
+
+            return request(app)
+                    .post('/api/categories')
+                    .send({ name: 'strategy',
+                            description: 'games that require tactical and strategic thinking to win' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when category does not have description field', () => {
+
+            return request(app)
+                    .post('/api/categories')
+                    .send({ slug: 'strategy',
+                            depiction: 'games that require tactical and strategic thinking to win' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when category with that slug already exists', () => {
+
+            return request(app)
+                    .post('/api/categories')
+                    .send({ slug: 'social deduction',
+                            description: 'games that require tactical and strategic thinking to win' })
+                    .expect(422)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Category already exists')
+
+                    })
+            
+        })
+
+        test('return an error when slug is empty', () => {
+
+            return request(app)
+                    .post('/api/categories')
+                    .send({ slug: '',
+                            description: 'games that require tactical and strategic thinking to win' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when description is empty', () => {
+
+            return request(app)
+                    .post('/api/categories')
+                    .send({ slug: 'strategy',
+                            description: '' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+            
+        })
+
+        test('return an error when slug is too long', () => {
+
+            const longSlug = 'a'.repeat(70)
+
+            return request(app)
+                    .post('/api/categories')
+                    .send({ slug: longSlug,
+                            description: 'games that require tactical and strategic thinking to win' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Category name too long')
+
+                    })
+            
+        })
+
+        test('return an error when description is too long', () => {
+
+            const longDescription = 'a'.repeat(1200)
+
+            return request(app)
+                    .post('/api/categories')
+                    .send({ slug: 'strategy',
+                            description: longDescription })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Description too long')
+
+                    })
+            
+        })
+
+
+    })
+
+})
+
+// describe('/api/reviews/:review_id', () => {
+
+//     describe('DELETE', () => {
+
+//         test('deletes review from database and returns empty object', () => {
+
+//             return request(app)
+//                     .delete('/api/reviews/3')
+//                     .expect(204)
+//                     .then((res) => {
+
+//                         expect(res.body).toEqual({})
+
+//                         const query = `SELECT * FROM reviews
+//                                         WHERE review_id = 3;`
+
+//                         return db.query(query)
+
+//                     })
+//                     .then((res) => {
+
+//                         expect(res.rows).toEqual([])
+
+//                     })
+
+//         })
+
+//         test('returns an error if the review id does not exist', () => {
+
+//             return request(app)
+//                     .delete('/api/reviews/999')
+//                     .expect(404)
+//                     .then((res) => {
+
+//                         expect(res.body.message).toBe('Review does not exist')
+
+//                     })
+
+//         })
+
+//     })
+
+// })
+
+// describe('/api/reviews/:review_id/comments', () => {
+
+//     describe('GET', () => {
+
+
+
+//     })
+
+// })

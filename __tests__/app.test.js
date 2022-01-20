@@ -440,6 +440,8 @@ describe('/api/reviews', () => {
                         .expect(200)
                         .then((res) => {
 
+                            expect(res.body.reviews.length).toBe(1)
+
                             res.body.reviews.forEach((review) => {
 
                                 expect(review.category).toBe('dexterity')
@@ -457,6 +459,8 @@ describe('/api/reviews', () => {
                         .get('/api/reviews?sort_by=owner&order=desc&category=social_deduction')
                         .expect(200)
                         .then((res) => {
+                            
+                            expect(res.body.reviews.length).toBe(11)
 
                             expect(res.body.reviews).toBeSortedBy('owner', { descending: true })  
 

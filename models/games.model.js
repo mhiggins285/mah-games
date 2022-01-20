@@ -165,3 +165,46 @@ exports.updateComment = async ( comment_id, inc_votes ) => {
     return writeResponse.rows[0]
 
 }
+
+exports.insertCategory = async (slug, description) => {
+
+    const query = `INSERT INTO categories
+                    (slug, description)
+                    VALUES
+                    ($1, $2)
+                    RETURNING *;`
+    const queryParams = [slug, description]
+
+    const response = await db.query(query, queryParams)
+
+    return response.rows[0]
+
+}
+
+exports.insertReview = async (title, owner, review_body, designer, category) => {
+
+    const query = `INSERT INTO reviews
+                    (title, owner, review_body, designer, category)
+                    VALUES
+                    ($1, $2, $3, $4, $5)
+                    RETURNING *;`
+    const queryParams = [title, owner, review_body, designer, category]
+
+    const response = await db.query(query, queryParams)
+
+    const review = response.rows[0]
+
+    review.comment_count = 0
+
+    return review
+
+}
+
+exports.deleteReviewFrom = async (review_id) => {
+
+    const query = `DELETE FROM reviews
+                    WHERE review_id = $1;`
+
+    await db.query(query, [review_id])
+
+}

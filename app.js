@@ -15,7 +15,10 @@ const { getCategories,
         getEndpoints,
         getUsers,
         getUserByUsername,
-        patchComment } = require('./controllers/games.controller.js')
+        patchComment,
+        postCategory,
+        postReview,
+        deleteReview } = require('./controllers/games.controller.js')
 
 const app = express()
 
@@ -27,6 +30,9 @@ app.get('/api', getEndpoints)
 // returns array of categories
 app.get('/api/categories', getCategories)
 
+// posts category
+app.post('/api/categories', postCategory)
+
 // returns list of all users
 app.get('/api/users', getUsers)
 
@@ -36,11 +42,17 @@ app.get('/api/users/:username', getUserByUsername)
 // returns list of all reviews
 app.get('/api/reviews', getReviews)
 
+// posts review
+app.post('/api/reviews', postReview)
+
 // returns review by review_id
 app.get('/api/reviews/:review_id', getReview)
 
 // modifies the total votes on a review
 app.patch('/api/reviews/:review_id', patchReview)
+
+// deletesReview
+// app.delete('/api/reviews/:review_id', deleteReview)
 
 // return list of all comments on a review
 app.get('/api/reviews/:review_id/comments', getCommentsByReviewId)
