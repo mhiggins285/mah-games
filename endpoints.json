@@ -13,6 +13,19 @@
       ]
     }
   },
+  "POST /api/categories": {
+    "description": "adds the requested category to the database",
+    "exampleRequest": { 
+      "slug": "strategy",
+      "description": "games that require tactical and strategic thinking to win" 
+    },
+    "exampleResponse": {
+      "category": { 
+        "slug": "strategy",
+        "description": "games that require tactical and strategic thinking to win" 
+      }
+    }
+  },
   "GET /api/users": {
     "description": "serves an array of the usernames of all the users",
     "exampleResponse": {
@@ -52,6 +65,29 @@
           "votes": 5
         }
       ]
+    }
+  },
+  "POST /api/reviews": {
+    "description": "adds the requested review to the database",
+    "exampleRequest": { 
+      "owner": "bainesface",
+      "title": "Ball and cup",
+      "review_body": "Hours of mindless fun",
+      "designer": "Johnny Ball",
+      "category": "dexterity" 
+    },
+    "exampleResponse": {
+      "review": { 
+        "review_id": 14,
+        "owner": "bainesface",
+        "title": "Ball and cup",
+        "review_body": "Hours of mindless fun",
+        "designer": "Johnny Ball",
+        "category": "dexterity",
+        "votes": 0,
+        "created_at": 1642585898453,
+        "comment_count": 0
+      }
     }
   },
   "GET /api/reviews/:review_id": {
@@ -106,15 +142,13 @@
       "body": "I'm indifferent to this game"
     },
     "exampleResponse": {
-      "comment": [
-        {
-          "body": "I'm indifferent to this game",
-          "votes": 0,
-          "author": "dav3rid",
-          "review_id": 4,
-          "created_at": 1642585898453
-        }
-      ]
+      "comment": {
+        "body": "I'm indifferent to this game",
+        "votes": 0,
+        "author": "dav3rid",
+        "review_id": 4,
+        "created_at": 1642585898453
+      }
     }
   },
   "PATCH /api/comments/:comment_id": {

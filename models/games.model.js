@@ -200,11 +200,11 @@ exports.insertReview = async (title, owner, review_body, designer, category) => 
 
 }
 
-exports.deleteReviewFrom = async (review_id) => {
+// exports.deleteReviewFrom = async (review_id) => {
 
-    const query = `DELETE FROM reviews
-                    WHERE review_id = $1;`
+//     const query = `DELETE FROM reviews
+//                     WHERE review_id = $1;`
 
-    await db.query(query, [review_id])
+//     await db.query(query, [review_id])
 
-}
+// }
