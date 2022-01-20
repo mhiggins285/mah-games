@@ -158,24 +158,52 @@ exports.getCommentsByReviewId = (req, res, next) => {
 
     const { review_id } = req.params
 
-    return checkReviewExists(review_id)
-        .then((doesReviewExist) => {
+    let limitQuery = req.query.limit
 
-            if (!doesReviewExist) {
+    let pageQuery = req.query.p
 
-                return Promise.reject({ status: 404, message: 'Review does not exist' })
+    if (limitQuery !== undefined) {
 
-            }
+        limitQuery = parseFloat(limitQuery)
 
-            return selectCommentsByReviewId(review_id)
+    }
 
-        })
-        .then((comments) => {
+    if (pageQuery !== undefined) {
 
-            res.status(200).send({ comments })
+        pageQuery = parseFloat(pageQuery)
 
-        })
-        .catch(next)
+    }
+
+    if (pageQuery !== undefined && limitQuery === undefined) {
+
+        next({ status: 400, message: 'Page query cannot be provided without limit query' })
+
+    } else if ((limitQuery !== undefined && !Number.isInteger(limitQuery)) || (pageQuery !== undefined && !Number.isInteger(pageQuery))) {
+
+        next({ status: 400, message: 'Bad request' })
+
+    } else {
+
+        return checkReviewExists(review_id)
+            .then((doesReviewExist) => {
+
+                if (!doesReviewExist) {
+
+                    return Promise.reject({ status: 404, message: 'Review does not exist' })
+
+                }
+
+                return selectCommentsByReviewId(review_id, limitQuery, pageQuery)
+
+            })
+            .then((comments) => {
+
+                res.status(200).send({ comments })
+
+            })
+            .catch(next)
+
+    }
 
 }
 

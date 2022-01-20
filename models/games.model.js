@@ -109,10 +109,27 @@ exports.selectReviews = async (sortQuery, orderQuery, categoryQuery, pageQuery, 
 
 }
 
-exports.selectCommentsByReviewId = async (review_id) => {
+exports.selectCommentsByReviewId = async (review_id, limitQuery, pageQuery) => {
+
+    let limitLine = ''
+
+    if (limitQuery) {
+
+        if (!pageQuery) {
+
+            pageQuery = 1
+
+        }
+
+        const offset = limitQuery * (pageQuery - 1)
+
+        limitLine = `LIMIT ${limitQuery} OFFSET ${offset}`
+
+    }
 
     const query = `SELECT * FROM comments
-                    WHERE review_id = $1;`
+                    WHERE review_id = $1
+                    ${limitLine};`
 
     const response = await db.query(query, [review_id])
 

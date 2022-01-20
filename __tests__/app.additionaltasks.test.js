@@ -795,12 +795,135 @@ describe('/api/reviews/:review_id', () => {
 
 })
 
-// describe('/api/reviews/:review_id/comments', () => {
+describe('/api/reviews/:review_id/comments', () => {
 
-//     describe('GET', () => {
+    describe.only('GET', () => {
 
+        test('limit and p queries can be used to return a subset of comments', () => {
 
+            return request(app)
+                    .get('/api/reviews/2/comments?limit=2&p=1')
+                    .expect(200)
+                    .then((res) => {
 
-//     })
+                        expect(res.body.comments.length).toBe(2)
+                        expect(res.body.comments[0].comment_id).toBe(1)
+                        expect(res.body.comments[1].comment_id).toBe(4)
 
-// })
+                    })
+
+        })
+
+        test('if limit is provided without p, defaults to first page', () => {
+
+            return request(app)
+                    .get('/api/reviews/2/comments?limit=2')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.comments.length).toBe(2)
+                        expect(res.body.comments[0].comment_id).toBe(1)
+                        expect(res.body.comments[1].comment_id).toBe(4)
+
+                    })            
+
+        })
+
+        test('if p is provided with limit, returns error', () => {
+
+            
+            return request(app)
+                    .get('/api/reviews/2/comments?p=2')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Page query cannot be provided without limit query')
+
+                    })
+
+        })
+
+        test("doesn't return error if page contains fewer than limit value results", () => {
+
+            return request(app)
+                    .get('/api/reviews/2/comments?limit=2&p=2')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.comments.length).toBe(1)
+                        expect(res.body.comments[0].comment_id).toBe(5)
+
+                    })
+
+        })
+
+        test("doesn't return error if limit is greater than number of entries", () => {
+
+            return request(app)
+                    .get('/api/reviews/2/comments?limit=5&p=1')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.comments.length).toBe(3)
+                        expect(res.body.comments[0].comment_id).toBe(1)
+                        expect(res.body.comments[2].comment_id).toBe(5)
+
+                    })
+            
+        })
+
+        test("doesn't return error if page is empty", () => {
+
+            return request(app)
+                    .get('/api/reviews/2/comments?limit=5&p=2')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.comments).toEqual([])
+
+                    })
+        
+        })
+
+        test('return error if limit is not an integer', () => {
+
+            return request(app)
+                    .get('/api/reviews/2/comments?limit=2.5&p=1')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
+        test('return error if p is not an integer', () => {
+
+            return request(app)
+                    .get('/api/reviews/2/comments?limit=2&p=1.5')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
+        test('return error if limit or p are not numbers', () => {
+
+            return request(app)
+                    .get('/api/reviews/2/comments?limit=two&p=one')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
+    })
+
+})
