@@ -412,27 +412,27 @@ exports.postReview = (req, res, next) => {
 
 }
 
-// exports.deleteReview = (req, res, next) => {
+exports.deleteReview = (req, res, next) => {
 
-//     const { review_id } = req.params
+    const { review_id } = req.params
 
-//     return checkReviewExists(review_id)
-//         .then((doesReviewExist) => {
+    return checkReviewExists(review_id)
+        .then((doesReviewExist) => {
 
-//             if (!doesReviewExist) {
+            if (!doesReviewExist) {
 
-//                 return Promise.reject({ status: 404, message: 'Review does not exist' })
+                return Promise.reject({ status: 404, message: 'Review does not exist' })
 
-//             }
+            }
 
-//             return deleteReviewFrom(review_id)
+            return deleteReviewFrom(review_id)
 
-//         })
-//         .then(() => {
+        })
+        .then(() => {
 
-//             res.status(204).send({})
+            res.status(204).send({})
 
-//         })
-//         .catch(next)
+        })
+        .catch(next)
 
-// }
+}

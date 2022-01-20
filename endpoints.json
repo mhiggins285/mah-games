@@ -121,6 +121,10 @@
       }
     }
   },
+  "DELETE /api/reviews/:review_id": {
+    "description": "deleted review with given review ID from the database",
+    "exampleResponse": {}
+  },
   "GET /api/reviews/:review_id/comments": {
     "description": "serves an array of all the comments associated with the given review ID",
     "exampleResponse": {

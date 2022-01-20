@@ -52,7 +52,7 @@ app.get('/api/reviews/:review_id', getReview)
 app.patch('/api/reviews/:review_id', patchReview)
 
 // deletesReview
-// app.delete('/api/reviews/:review_id', deleteReview)
+app.delete('/api/reviews/:review_id', deleteReview)
 
 // return list of all comments on a review
 app.get('/api/reviews/:review_id/comments', getCommentsByReviewId)

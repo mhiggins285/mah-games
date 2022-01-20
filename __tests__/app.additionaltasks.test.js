@@ -591,49 +591,70 @@ describe('/api/categories', () => {
 
 })
 
-// describe('/api/reviews/:review_id', () => {
+describe('/api/reviews/:review_id', () => {
 
-//     describe('DELETE', () => {
+    describe('DELETE', () => {
 
-//         test('deletes review from database and returns empty object', () => {
+        test('deletes review from database and returns empty object', () => {
 
-//             return request(app)
-//                     .delete('/api/reviews/3')
-//                     .expect(204)
-//                     .then((res) => {
+            return request(app)
+                    .delete('/api/reviews/3')
+                    .expect(204)
+                    .then((res) => {
 
-//                         expect(res.body).toEqual({})
+                        expect(res.body).toEqual({})
 
-//                         const query = `SELECT * FROM reviews
-//                                         WHERE review_id = 3;`
+                        const query = `SELECT * FROM reviews
+                                        WHERE review_id = 3;`
 
-//                         return db.query(query)
+                        return db.query(query)
 
-//                     })
-//                     .then((res) => {
+                    })
+                    .then((res) => {
 
-//                         expect(res.rows).toEqual([])
+                        expect(res.rows).toEqual([])
 
-//                     })
+                    })
 
-//         })
+        })
 
-//         test('returns an error if the review id does not exist', () => {
+        test('deletes all comments associated with review', () => {
 
-//             return request(app)
-//                     .delete('/api/reviews/999')
-//                     .expect(404)
-//                     .then((res) => {
+            return request(app)
+                    .delete('/api/reviews/3')
+                    .expect(204)
+                    .then(() => {
 
-//                         expect(res.body.message).toBe('Review does not exist')
+                        const query = `SELECT * FROM comments
+                                        WHERE review_id = 3;`
 
-//                     })
+                        return db.query(query)
 
-//         })
+                    })
+                    .then((res) => {
 
-//     })
+                        expect(res.rows).toEqual([])
 
-// })
+                    })
+
+        })
+
+        test('returns an error if the review id does not exist', () => {
+
+            return request(app)
+                    .delete('/api/reviews/999')
+                    .expect(404)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+    })
+
+})
 
 // describe('/api/reviews/:review_id/comments', () => {
 
