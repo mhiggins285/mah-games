@@ -446,11 +446,150 @@ describe('/api/reviews', () => {
 
     })
 
-    // describe('GET', () => {
+    describe('GET', () => {
 
+        test('limit and p queries can be used to return a subset of reviews', () => {
 
+            return request(app)
+                    .get('/api/reviews?limit=5&p=2&sort_by=review_id')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.reviews.length).toBe(5)
+                        expect(res.body.reviews[0].review_id).toBe(6)
+                        expect(res.body.reviews[4].review_id).toBe(10)
+
+                    })
+
+        })
+
+        test('if limit is provided without p, defaults to first page', () => {
+
+            return request(app)
+                    .get('/api/reviews?limit=5&sort_by=review_id')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.reviews.length).toBe(5)
+                        expect(res.body.reviews[0].review_id).toBe(1)
+                        expect(res.body.reviews[4].review_id).toBe(5)
+
+                    })            
+
+        })
+
+        test('if p is provided with limit, returns error', () => {
+
+            
+            return request(app)
+                    .get('/api/reviews?p=2&sort_by=review_id')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Page query cannot be provided without limit query')
+
+                    })
+
+        })
+
+        test("doesn't return error if page contains fewer than limit value results", () => {
+
+            return request(app)
+                    .get('/api/reviews?limit=5&p=3&sort_by=review_id')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.reviews.length).toBe(3)
+                        expect(res.body.reviews[0].review_id).toBe(11)
+                        expect(res.body.reviews[2].review_id).toBe(13)
+
+                    })
+
+        })
+
+        test("doesn't return error if limit is greater than number of entries", () => {
+
+            return request(app)
+                    .get('/api/reviews?limit=15&p=1&sort_by=review_id')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.reviews.length).toBe(13)
+                        expect(res.body.reviews[0].review_id).toBe(1)
+                        expect(res.body.reviews[12].review_id).toBe(13)
+
+                    })
+            
+        })
+
+        test("doesn't return error if page is empty", () => {
+
+            return request(app)
+                    .get('/api/reviews?limit=5&p=4&sort_by=review_id')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.reviews).toEqual([])
+
+                    })
         
-    // })
+        })
+
+        test('pagination works correctly when used with other queries', () => {
+
+            return request(app)
+                    .get('/api/reviews?limit=5&p=2&sort_by=owner&order=desc&category=social_deduction')
+                    .expect(200)
+                    .then((res) => {
+
+                        expect(res.body.reviews.length).toBe(5)
+                        expect(res.body.reviews[0].review_id).toBe(8)
+                        expect(res.body.reviews[4].review_id).toBe(12)
+
+                    })
+
+        })
+
+        test('return error if limit is not an integer', () => {
+
+            return request(app)
+                    .get('/api/reviews?limit=5.5&p=2&sort_by=review_id')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
+        test('return error if p is not an integer', () => {
+
+            return request(app)
+                    .get('/api/reviews?limit=5&p=2.5&sort_by=review_id')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
+        test('return error if limit or p are not numbers', () => {
+
+            return request(app)
+                    .get('/api/reviews?limit=five&p=two&sort_by=review_id')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
+    })
 
 })
 

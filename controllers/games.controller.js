@@ -12,8 +12,6 @@ const { selectCategories,
         insertReview,
         deleteReviewFrom } = require('../models/games.model.js')
 
-const { checkInteger } = require('../utils/checkInteger.js')
-
 const { checkReviewExists } = require('../utils/checkReviewExists.js') 
 
 const { checkUserExists } = require('../utils/checkUserExists.js')
@@ -69,35 +67,32 @@ exports.patchReview = (req, res, next) => {
     const { review_id } = req.params
     const { inc_votes } = req.body
 
-    return checkReviewExists(review_id)
-        .then((doesReviewExist) => {
+    if (!Number.isInteger(inc_votes)) {
 
-            if (!doesReviewExist) {
+        next({ status: 400, message: 'Bad request' })
 
-                return Promise.reject({ status: 404, message: "Review does not exist" })
+    } else {
 
-            }
+        return checkReviewExists(review_id)
+            .then((doesReviewExist) => {
 
-            return checkInteger(inc_votes)
+                if (!doesReviewExist) {
 
-        })
-        .then((isIncVotesInteger) => {
+                    return Promise.reject({ status: 404, message: "Review does not exist" })
 
-            if (!isIncVotesInteger) {
+                }
 
-                return Promise.reject({ status: 400, message: 'Bad request' })
+                return updateReview(review_id, inc_votes)
 
-            }
+            })
+            .then((review) => {
 
-            return updateReview(review_id, inc_votes)
+                res.status(200).send({ review })
 
-        })
-        .then((review) => {
+            })
+            .catch(next)
 
-            res.status(200).send({ review })
-
-        })
-        .catch(next)
+    }
 
 }
 
@@ -109,25 +104,53 @@ exports.getReviews = (req, res, next) => {
 
     let categoryQuery = req.query.category
 
+    let limitQuery = req.query.limit
+
+    let pageQuery = req.query.p
+
     if (categoryQuery !== undefined) {
 
         categoryQuery = categoryQuery.replace(/_/g, ' ')
 
     }
 
-    return selectReviews(sortQuery, orderQuery, categoryQuery)
-        .then((reviews) => {
+    if (limitQuery !== undefined) {
 
-            reviews.forEach((review) => {
+        limitQuery = parseFloat(limitQuery)
 
-                review.comment_count = parseInt(review.comment_count)
+    }
+
+    if (pageQuery !== undefined) {
+
+        pageQuery = parseFloat(pageQuery)
+
+    }
+
+    if (pageQuery !== undefined && limitQuery === undefined) {
+
+        next({ status: 400, message: 'Page query cannot be provided without limit query' })
+
+    } else if ((limitQuery !== undefined && !Number.isInteger(limitQuery)) || (pageQuery !== undefined && !Number.isInteger(pageQuery))) {
+
+        next({ status: 400, message: 'Bad request' })
+
+    } else {
+
+        return selectReviews(sortQuery, orderQuery, categoryQuery, pageQuery, limitQuery)
+            .then((reviews) => {
+
+                reviews.forEach((review) => {
+
+                    review.comment_count = parseInt(review.comment_count)
+
+                })
+
+                res.status(200).send({reviews})
 
             })
+            .catch(next)
 
-            res.status(200).send({reviews})
-
-        })
-        .catch(next)
+    }
 
 }
 
@@ -283,35 +306,32 @@ exports.patchComment = (req, res, next) => {
     const { comment_id } = req.params
     const { inc_votes } = req.body
 
-    return checkCommentExists(comment_id)
-        .then((doesCommentExist) => {
+    if (!Number.isInteger(inc_votes)) {
+        
+        next({ status: 400, message: 'Bad request' })
 
-            if (!doesCommentExist) {
+    } else {
 
-                return Promise.reject({ status: 404, message: "Comment does not exist" })
+        return checkCommentExists(comment_id)
+            .then((doesCommentExist) => {
 
-            }
+                if (!doesCommentExist) {
 
-            return checkInteger(inc_votes)
+                    return Promise.reject({ status: 404, message: "Comment does not exist" })
 
-        })
-        .then((isIncVotesInteger) => {
+                }
 
-            if (!isIncVotesInteger) {
+                return updateComment(comment_id, inc_votes)
 
-                return Promise.reject({ status: 400, message: 'Bad request' })
+            })
+            .then((comment) => {
 
-            }
+                res.status(200).send({ comment })
 
-            return updateComment(comment_id, inc_votes)
+            })
+            .catch(next)
 
-        })
-        .then((comment) => {
-
-            res.status(200).send({ comment })
-
-        })
-        .catch(next)
+    }
 
 }
 

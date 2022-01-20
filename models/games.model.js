@@ -45,7 +45,7 @@ exports.updateReview = async ( review_id, inc_votes ) => {
 
 }
 
-exports.selectReviews = async (sortQuery, orderQuery, categoryQuery) => {
+exports.selectReviews = async (sortQuery, orderQuery, categoryQuery, pageQuery, limitQuery) => {
 
     const validSortQueries = ['review_id', 'title', 'designer', 'owner', 'review_body', 'category', 'created_at', 'votes']
     const validOrderQueries = ['asc', 'desc']
@@ -79,12 +79,29 @@ exports.selectReviews = async (sortQuery, orderQuery, categoryQuery) => {
 
     }
 
+    let limitLine = ''
+
+    if (limitQuery) {
+
+        if (!pageQuery) {
+
+            pageQuery = 1
+
+        }
+
+        const offset = limitQuery * (pageQuery - 1)
+
+        limitLine = `LIMIT ${limitQuery} OFFSET ${offset}`
+
+    }
+
     const query = `SELECT reviews.review_id, reviews.title, reviews.designer, reviews.review_img_url, reviews.owner, reviews.review_body, reviews.category, reviews.created_at, reviews.votes, COUNT(comments.comment_id) AS comment_count FROM reviews
                     FULL JOIN comments
                     ON reviews.review_id = comments.review_id
                     ${conditionalLine}
                     GROUP BY reviews.review_id
-                    ORDER BY ${sortQuery} ${orderQuery};`
+                    ORDER BY ${sortQuery} ${orderQuery}
+                    ${limitLine};`
 
     const response = await db.query(query)
 
