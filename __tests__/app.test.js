@@ -216,6 +216,30 @@ describe('/api/reviews/:review_id', () => {
 
         })
 
+        test('still works correctly when review has no associated comments', () => {
+
+            return request(app)
+                    .get('/api/reviews/1')
+                    .expect(200)
+                    .then((res) => {
+
+                        const review = res.body.review
+
+                        expect(review.review_id).toBe(1)
+                        expect(review.title).toBe('Agricola')
+                        expect(review.designer).toBe('Uwe Rosenberg')
+                        expect(review.owner).toBe('mallionaire')
+                        expect(review.review_img_url).toBe('https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png')
+                        expect(review.review_body).toBe("Farmyard fun!")
+                        expect(review.category).toBe('euro game')
+                        expect(new Date(review.created_at)).toEqual(new Date(1610964020514))
+                        expect(review.votes).toBe(1)
+                        expect(review.comment_count).toBe(0)
+
+                    })
+
+        })
+
         test('returns error when review_id that does not exist is entered', () => {
 
             return request(app)

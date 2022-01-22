@@ -1,4 +1,4 @@
-exports.categoryFormat = ( categories ) => {
+exports.formatCategory = ( categories ) => {
 
     return categories.map((category) => {
 
@@ -8,7 +8,7 @@ exports.categoryFormat = ( categories ) => {
 
 }
 
-exports.userFormat = ( users ) => {
+exports.formatUser = ( users ) => {
 
     return users.map((user) => {
 
@@ -18,7 +18,7 @@ exports.userFormat = ( users ) => {
 
 }
 
-exports.reviewFormat = ( reviews ) => {
+exports.formatReview = ( reviews ) => {
 
     return reviews.map((review) => {
 
@@ -29,7 +29,7 @@ exports.reviewFormat = ( reviews ) => {
 
 }
 
-exports.commentFormat = ( comments ) => {
+exports.formatComment = ( comments ) => {
 
     return comments.map((comment) => {
 

@@ -1,6 +1,6 @@
 const db = require("../connection.js")
 const format = require("pg-format")
-const { categoryFormat, userFormat, reviewFormat, commentFormat } = require('../../utils/seedFormatting.js')
+const { formatCategory, formatUser, formatReview, formatComment } = require('../../utils/seedFormatting.js')
 
 const seed = (data) => {
 
@@ -63,7 +63,7 @@ const seed = (data) => {
           (slug, description)
           VALUES
           %L;`,
-        categoryFormat(categoryData)
+        formatCategory(categoryData)
       );
       return db.query(query);
     })
@@ -73,7 +73,7 @@ const seed = (data) => {
           (username, name, avatar_url)
           VALUES
           %L;`,
-        userFormat(userData)
+        formatUser(userData)
       );
       return db.query(query);
     })
@@ -83,7 +83,7 @@ const seed = (data) => {
           (title, designer, owner, review_img_url, review_body, category, created_at, votes)
           VALUES
           %L;`,
-        reviewFormat(reviewData)
+        formatReview(reviewData)
       );
       return db.query(query);
     })
@@ -93,7 +93,7 @@ const seed = (data) => {
           (body, votes, author, review_id, created_at)
           VALUES
           %L;`,
-        commentFormat(commentData)
+        formatComment(commentData)
       );
       return db.query(query);
     })

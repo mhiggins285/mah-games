@@ -797,7 +797,7 @@ describe('/api/reviews/:review_id', () => {
 
 describe('/api/reviews/:review_id/comments', () => {
 
-    describe.only('GET', () => {
+    describe('GET', () => {
 
         test('limit and p queries can be used to return a subset of comments', () => {
 

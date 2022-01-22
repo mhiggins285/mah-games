@@ -1,24 +1,28 @@
 const express = require("express")
-
-const { checksMethodNotAllowed,
-        handlesInvalidEndpoint, 
-        handlesCustomErrors, 
-        handlesUnspecifiedErrors } = require('./controllers/errors.controller.js')
+        
+const { getEndpoints } = require('./controllers/general.controller.js')
         
 const { getCategories,
-        getReview,
+        postCategory } = require('./controllers/categories.controller.js')
+        
+const { getUsers,
+        getUserByUsername } = require('./controllers/users.controller.js')
+        
+const { getReview,
         patchReview,
         getReviews,
-        getCommentsByReviewId,
+        postReview,
+        deleteReview } = require('./controllers/reviews.controller.js')
+        
+const { getCommentsByReviewId,
         postCommentToReview,
         deleteComment,
-        getEndpoints,
-        getUsers,
-        getUserByUsername,
-        patchComment,
-        postCategory,
-        postReview,
-        deleteReview } = require('./controllers/games.controller.js')
+        patchComment } = require('./controllers/comments.controller.js')
+
+const { checksMethodNotAllowed,
+    handlesInvalidEndpoint, 
+    handlesCustomErrors, 
+    handlesUnspecifiedErrors } = require('./controllers/errors.controller.js')
 
 const app = express()
 
