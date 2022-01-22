@@ -23,13 +23,13 @@ exports.postCategory = (req, res, next) => {
         
         next({ status: 400, message: 'Bad request' })
 
-    } else if (description.length > 1000) {
-
-        next({ status: 400, message: 'Description too long' })
-
     } else if (slug.length > 50) {
 
         next({ status: 400, message: 'Category name too long' })
+
+    } else if (description.length > 1000) {
+
+        next({ status: 400, message: 'Description too long' })
 
     } else {
 

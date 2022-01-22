@@ -737,7 +737,6 @@ describe('/api/categories', () => {
             
         })
 
-
     })
 
 })

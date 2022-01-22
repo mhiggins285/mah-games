@@ -50,6 +50,38 @@
       }
     }
   },
+  "POST /api/users": {
+    "description": "adds the requested user to the database",
+    "exampleRequest": {
+      "username": "L285",
+      "name": "Michael",
+      "avatar_url": "https://archives.bulbagarden.net/media/upload/thumb/d/d8/285Shroomish.png/250px-285Shroomish.png"
+    },
+    "exampleResponse": {
+      "user": [
+        {
+          "username": "L285",
+          "name": "Michael",
+          "avatar_url": "https://archives.bulbagarden.net/media/upload/thumb/d/d8/285Shroomish.png/250px-285Shroomish.png"
+        }
+      ]
+    }
+  },
+  "PATCH /api/users/:username": {
+    "description": "updates the details of a user with a given username",
+    "exampleRequest": {
+      "name": "bainesy",
+      "avatar_url": "https://img.pokemondb.net/artwork/large/oddish.jpg"
+    },
+    "exampleResponse": {
+      "user": {
+        "username": "bainesface",
+        "name": "bainesy",
+        "avatar_url":
+          "https://img.pokemondb.net/artwork/large/oddish.jpg"
+      }
+    }
+  },
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
     "queries": ["category", "sort_by", "order", "limit", "p"],
@@ -59,6 +91,7 @@
           "title": "One Night Ultimate Werewolf",
           "designer": "Akihisa Okui",
           "owner": "happyamy2016",
+          "review_body": "We couldn't find the werewolf!",
           "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
           "category": "hidden-roles",
           "created_at": 1610964101251,
@@ -97,6 +130,7 @@
         "title": "One Night Ultimate Werewolf",
         "designer": "Akihisa Okui",
         "owner": "happyamy2016",
+        "review_body": "We couldn't find the werewolf!",
         "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
         "category": "hidden-roles",
         "created_at": 1610964101251,
@@ -114,10 +148,29 @@
         "title": "One Night Ultimate Werewolf",
         "designer": "Akihisa Okui",
         "owner": "happyamy2016",
+        "review_body": "We couldn't find the werewolf!",
         "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
         "category": "hidden-roles",
         "created_at": 1610964101251,
         "votes": 7
+      }
+    }
+  },
+  "PATCH /api/reviews/:review_id/body": {
+    "description": "updates the review_body value on the review with the given review ID",
+    "exampleRequest": {
+      "review_body": "This was ace" 
+    },
+    "exampleResponse": {
+      "review": {
+        "title": "One Night Ultimate Werewolf",
+        "designer": "Akihisa Okui",
+        "owner": "happyamy2016",
+        "review_body": "This was ace",
+        "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+        "category": "hidden-roles",
+        "created_at": 1610964101251,
+        "votes": 5
       }
     }
   },
@@ -164,6 +217,21 @@
     "exampleResponse": {
       "comment": {
         "body": "I loved this game too!",
+        "votes": 18,
+        "author": "bainesface",
+        "review_id": 2,
+        "created_at": 1511354613389
+      }
+    }
+  },
+  "PATCH /api/comments/:comment_id/body": {
+    "description": "updates the body value on the comment with the given comment ID",
+    "exampleRequest": {
+      "body": "I agree"
+    },
+    "exampleResponse": {
+      "comment": {
+        "body": "I agree",
         "votes": 18,
         "author": "bainesface",
         "review_id": 2,
