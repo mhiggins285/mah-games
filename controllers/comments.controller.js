@@ -31,7 +31,7 @@ exports.getCommentsByReviewId = (req, res, next) => {
 
         next({ status: 400, message: 'Page query cannot be provided without limit query' })
 
-    } else if ((limitQuery !== undefined && !Number.isInteger(limitQuery)) || (pageQuery !== undefined && !Number.isInteger(pageQuery))) {
+    } else if ((limitQuery !== undefined && !Number.isInteger(limitQuery)) || (pageQuery !== undefined && !Number.isInteger(pageQuery)) || !Number.isInteger(parseFloat(review_id))) {
 
         next({ status: 400, message: 'Bad request' })
 
@@ -65,7 +65,7 @@ exports.postCommentToReview = (req, res, next) => {
     const { review_id } = req.params
     const { user, body } = req.body
 
-    if (body === undefined || user === undefined || body === '') {
+    if (body === undefined || user === undefined || body === '' || !Number.isInteger(parseFloat(review_id))) {
         
         next({ status: 400, message: 'Bad request' })
 
@@ -113,24 +113,32 @@ exports.deleteComment = (req, res, next) => {
 
     const { comment_id } = req.params
 
-    return checkCommentExists(comment_id)
-        .then((doesCommentExist) => {
+    if (!Number.isInteger(parseFloat(comment_id))) {
 
-            if (!doesCommentExist) {
+        next({ status: 400, message: 'Bad request'})
 
-                return Promise.reject({ status: 404, message: 'Comment does not exist' })
+    } else {
 
-            }
+        return checkCommentExists(comment_id)
+            .then((doesCommentExist) => {
 
-            return deleteCommentFrom(comment_id)
+                if (!doesCommentExist) {
 
-        })
-        .then(() => {
+                    return Promise.reject({ status: 404, message: 'Comment does not exist' })
 
-            res.status(204).send({})
+                }
 
-        })
-        .catch(next)
+                return deleteCommentFrom(comment_id)
+
+            })
+            .then(() => {
+
+                res.status(204).send({})
+
+            })
+            .catch(next)
+
+    }
 
 }
 
@@ -139,7 +147,7 @@ exports.patchComment = (req, res, next) => {
     const { comment_id } = req.params
     const { inc_votes } = req.body
 
-    if (!Number.isInteger(inc_votes)) {
+    if (!Number.isInteger(inc_votes) || !Number.isInteger(parseFloat(comment_id))) {
         
         next({ status: 400, message: 'Bad request' })
 

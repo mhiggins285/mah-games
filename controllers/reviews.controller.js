@@ -12,27 +12,34 @@ exports.getReview = (req, res, next) => {
 
     const { review_id } = req.params
 
-    return checkReviewExists(review_id)
-        .then((doesReviewExist) => {
+    if (!Number.isInteger(parseFloat(review_id))) {
 
-            if (!doesReviewExist) {
+        next({ status: 400, message: 'Bad request' })
 
-                return Promise.reject({ status: 404, message: 'Review does not exist' })
-                
-            }
+    } else { 
 
-            return selectReview(review_id)
+        return checkReviewExists(review_id)
+            .then((doesReviewExist) => {
 
-        })
-        .then((review) => {
+                if (!doesReviewExist) {
 
-            review.comment_count = parseInt(review.comment_count)
+                    return Promise.reject({ status: 404, message: 'Review does not exist' })
+                    
+                }
 
-            res.status(200).send( { review } )
+                return selectReview(review_id)
 
-        })
-        .catch(next)
+            })
+            .then((review) => {
 
+                review.comment_count = parseInt(review.comment_count)
+
+                res.status(200).send( { review } )
+
+            })
+            .catch(next)
+
+    }
 
 }
 
@@ -41,7 +48,7 @@ exports.patchReview = (req, res, next) => {
     const { review_id } = req.params
     const { inc_votes } = req.body
 
-    if (!Number.isInteger(inc_votes)) {
+    if (!Number.isInteger(inc_votes) || !Number.isInteger(parseFloat(review_id))) {
 
         next({ status: 400, message: 'Bad request' })
 
@@ -117,7 +124,24 @@ exports.getReviews = (req, res, next) => {
 
     } else {
 
-        return selectReviews(sortQuery, orderQuery, categoryQuery, pageQuery, limitQuery)
+        return checkCategoryExists(categoryQuery)
+            .then((doesCategoryExist) => {
+
+                if (categoryQuery === undefined) {
+
+                    doesCategoryExist = true
+
+                }
+
+                if (!doesCategoryExist) {
+
+                    return Promise.reject({ status: 422, message: 'Category does not exist' })
+
+                }
+
+                return selectReviews(sortQuery, orderQuery, categoryQuery, pageQuery, limitQuery)
+
+            })
             .then((reviews) => {
 
                 reviews.forEach((review) => {
@@ -195,23 +219,31 @@ exports.deleteReview = (req, res, next) => {
 
     const { review_id } = req.params
 
-    return checkReviewExists(review_id)
-        .then((doesReviewExist) => {
+    if (!Number.isInteger(parseFloat(review_id))) {
 
-            if (!doesReviewExist) {
+        next({ status: 400, message: 'Bad request' })
 
-                return Promise.reject({ status: 404, message: 'Review does not exist' })
+    } else {
 
-            }
+        return checkReviewExists(review_id)
+            .then((doesReviewExist) => {
 
-            return deleteReviewFrom(review_id)
+                if (!doesReviewExist) {
 
-        })
-        .then(() => {
+                    return Promise.reject({ status: 404, message: 'Review does not exist' })
 
-            res.status(204).send({})
+                }
 
-        })
-        .catch(next)
+                return deleteReviewFrom(review_id)
+
+            })
+            .then(() => {
+
+                res.status(204).send({})
+
+            })
+            .catch(next)
+
+    }
 
 }

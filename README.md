@@ -24,19 +24,10 @@ git clone https://github.com/mhiggins285/mah-games
 
 This repository makes use of a few other packages that you will need to install before it is able to run locally.
 
-Firstly, make sure that you have npm initialised using the following command:
+To make sure you have all of these installed, run the following command when you first open the repository:
 
 ```bash
-npm init -y
-```
-
-Then you will need to install the `dotenv`, `express`, `pg` and `pg-format` packages using the below commands
-
-```bash
-npm i dotenv
-npm i express
-npm i pg
-npm i pg-format
+npm i
 ```
 
 ### Seeding local database
@@ -61,15 +52,12 @@ psql -f FILEPATH
 
 ### Running tests
 
-In order to run the tests, you will need to install a few additional packages, that the tests are dependent on: `jest`, `jest-sorted` and `supertest`.
+To run the tests, run the below command, where REGEX is an optional modifier which will run all files which have a regex match to said modifier within their names. For example using `app` will only run the `app.test.js` file.
+
 
 ```bash
-npm i jest
-npm i jest-sorted
-npm i supertest
+npm t REGEX
 ```
-
-To run the tests, run the below command, where REGEX is an optional modifier which will run all files which have a regex match to said modifier within their names. For example using `app` will only run the `app.test.js` file.
 
 ### Setting up environments
 

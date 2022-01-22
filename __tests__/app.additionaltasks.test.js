@@ -1,12 +1,10 @@
-const db = require('../db/connection.js');
-const testData = require('../db/data/test-data/index.js');
-const seed = require('../db/seeds/seed.js');
+const db = require('../db/connection.js')
+const testData = require('../db/data/test-data/index.js')
+const seed = require('../db/seeds/seed.js')
 const app = require('../app.js')
 const request = require('supertest')
 
-
-beforeEach(() => seed(testData));
-afterAll(() => db.end());
+beforeEach(() => seed(testData))
 
 describe('/api/users', () => {
 
@@ -125,11 +123,25 @@ describe('/api/comments/:comment_id', () => {
 
         })
 
+        test('returns error when invalid comment_id is entered', () => {
+
+            return request(app)
+                    .patch('/api/comments/string')
+                    .send({ inc_votes: 1 })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })        
+
         test('returns error when body of request does not contain inc_votes property', () => {
 
             return request(app)
                     .patch('/api/comments/4')
-                    .send({ ince_vote: 'Four' })
+                    .send({ ince_vote: 4 })
                     .expect(400)
                     .then((res) => {
 
@@ -143,7 +155,7 @@ describe('/api/comments/:comment_id', () => {
 
             return request(app)
                     .patch('/api/comments/4')
-                    .send({ inc_votes: 4.2 })
+                    .send({ inc_votes: 'Four' })
                     .expect(400)
                     .then((res) => {
 
@@ -157,7 +169,7 @@ describe('/api/comments/:comment_id', () => {
 
             return request(app)
                     .patch('/api/comments/4')
-                    .send({ ince_votes: 4 })
+                    .send({ inc_votes: 4.2 })
                     .expect(400)
                     .then((res) => {
 
@@ -786,6 +798,19 @@ describe('/api/reviews/:review_id', () => {
                     .then((res) => {
 
                         expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+        test('returns error when invalid review_id is entered', () => {
+
+            return request(app)
+                    .delete('/api/reviews/string')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
 
                     })
 

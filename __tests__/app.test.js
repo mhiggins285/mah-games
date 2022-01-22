@@ -1,13 +1,12 @@
-const db = require('../db/connection.js');
-const testData = require('../db/data/test-data/index.js');
-const seed = require('../db/seeds/seed.js');
+const db = require('../db/connection.js')
+const testData = require('../db/data/test-data/index.js')
+const seed = require('../db/seeds/seed.js')
 const app = require('../app.js')
 const request = require('supertest')
 const fs = require('fs/promises')
 
 
-beforeEach(() => seed(testData));
-afterAll(() => db.end());
+beforeEach(() => seed(testData))
 
 describe('seed works correctly', () => {
 
@@ -253,6 +252,19 @@ describe('/api/reviews/:review_id', () => {
 
         })
 
+        test('returns error when invalid review_id is entered', () => {
+
+            return request(app)
+                    .get('/api/reviews/string')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
+
+                    })
+
+        })
+
     })
 
     describe('PATCH', () => {
@@ -294,6 +306,20 @@ describe('/api/reviews/:review_id', () => {
                     .then((res) => {
 
                         expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+        test('returns error when invalid review_id is entered', () => {
+
+            return request(app)
+                    .patch('/api/reviews/string')
+                    .send({ inc_votes: 1 })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
 
                     })
 
@@ -528,11 +554,24 @@ describe('/api/reviews', () => {
         test('does not return error if queries result in an empty response', () => {
 
             return request(app)
-                        .get('/api/reviews?category=strategy')
+                        .get("/api/reviews?category=children's_games")
                         .expect(200)
                         .then((res) => {
 
                             expect(res.body.reviews).toEqual([])
+
+                        })
+
+        })
+
+        test('returns an error if category does not exist', () => {
+
+            return request(app)
+                        .get("/api/reviews?category=strategy")
+                        .expect(422)
+                        .then((res) => {
+
+                            expect(res.body.message).toEqual('Category does not exist')
 
                         })
 
@@ -557,7 +596,16 @@ describe('/api/reviews/:review_id/comments', () => {
 
                         res.body.comments.forEach((comment) => {
 
-                            expect(comment.review_id).toBe(2)
+                            expect(comment.review_id).toBe(2),
+                            expect.objectContaining({
+
+                                comment_id: expect.any(Number),
+                                body: expect.any(String),
+                                author: expect.any(String),
+                                created_at: expect.any(Date),
+                                votes: expect.any(Number)
+        
+                            })
 
                         })
 
@@ -573,6 +621,19 @@ describe('/api/reviews/:review_id/comments', () => {
                     .then((res) => {
 
                         expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+        test('returns error when invalid review_id is entered', () => {
+
+            return request(app)
+                    .get('/api/reviews/string/comments')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
 
                     })
 
@@ -622,6 +683,21 @@ describe('/api/reviews/:review_id/comments', () => {
                     .then((res) => {
 
                         expect(res.body.message).toBe('Review does not exist')
+
+                    })
+
+        })
+
+        test('returns error when invalid review_id is entered', () => {
+
+            return request(app)
+                    .post('/api/reviews/string/comments')
+                    .send({ user: 'bainesface',
+                            body: 'I disagree' })
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
 
                     })
 
@@ -743,6 +819,19 @@ describe('/api/comments/:comment_id', () => {
                     .then((res) => {
 
                         expect(res.body.message).toBe('Comment does not exist')
+
+                    })
+
+        })
+
+        test('returns error when invalid comment_id is entered', () => {
+
+            return request(app)
+            .delete('/api/comments/string')
+                    .expect(400)
+                    .then((res) => {
+
+                        expect(res.body.message).toBe('Bad request')
 
                     })
 

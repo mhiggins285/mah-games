@@ -2,7 +2,7 @@ const { formatCategory, formatUser, formatReview, formatComment } = require('../
 
 describe('functions create arrays of appropriate form to be fed into pg.format', () => {
 
-    test('categories', () => {
+    test('formatCategories formats category array in correct way', () => {
 
         const input = [{ slug: 'war game', description: 'Games replicating battles/wars' },
                     { slug: 'management simulator', description: 'Games replicating the running of a business' },
@@ -16,7 +16,22 @@ describe('functions create arrays of appropriate form to be fed into pg.format',
 
     })
 
-    test('users', () => {
+    test('formatCategories does not mutate input', () => {
+
+        const input = [{ slug: 'war game', description: 'Games replicating battles/wars' },
+                    { slug: 'management simulator', description: 'Games replicating the running of a business' },
+                    { slug: 'word game', description: 'Games testing players bredth and use of language' }]
+        const expected = [{ slug: 'war game', description: 'Games replicating battles/wars' },
+                    { slug: 'management simulator', description: 'Games replicating the running of a business' },
+                    { slug: 'word game', description: 'Games testing players bredth and use of language' }]
+
+        formatCategory(input)
+
+        expect(input).toEqual(expected)
+
+    })
+
+    test('formatUsers formats users array in the correct way', () => {
 
         const input = [{ username: 'L285', name: 'Michael', avatar_url: 'coolavatar.com'},
                     { username: 'L286', name: 'Mike', avatar_url: 'coolavatar.co.uk'},
@@ -30,7 +45,22 @@ describe('functions create arrays of appropriate form to be fed into pg.format',
 
     })
 
-    test('reviews', () => {
+    test('formatUsers does not mutate input', () => {
+
+        const input = [{ username: 'L285', name: 'Michael', avatar_url: 'coolavatar.com'},
+                    { username: 'L286', name: 'Mike', avatar_url: 'coolavatar.co.uk'},
+                    { username: 'L287', name: 'Mickey', avatar_url: 'coolavatar.org'}]
+        const expected = [{ username: 'L285', name: 'Michael', avatar_url: 'coolavatar.com'},
+                    { username: 'L286', name: 'Mike', avatar_url: 'coolavatar.co.uk'},
+                    { username: 'L287', name: 'Mickey', avatar_url: 'coolavatar.org'}]
+
+        formatUser(input)
+
+        expect(input).toEqual(expected)
+
+    })
+
+    test('formatReviews formats reviews array in the correct way', () => {
 
         const input = [{ title: 'Invade Yorkshire', designer: 'Rose Redd', owner: 'L285', review_img_url: 'coolreviewimages.com', review_body: 'Oooh Lanky Lanky Lancashire', category: 'war games', created_at: new Date(1610964020514), votes: 89 },
                     { title: 'Dobble!', designer: 'Anna Gram', owner: 'L287', review_img_url: 'coolreviewimages.co.uk', review_body: 'Boggle rip-off', category: 'word games', created_at: new Date(1610964020515), votes: 31 }]
@@ -42,7 +72,20 @@ describe('functions create arrays of appropriate form to be fed into pg.format',
         
     })
 
-    test('comments', () => {
+    test('formatReviews does not mutate input', () => {
+
+        const input = [{ title: 'Invade Yorkshire', designer: 'Rose Redd', owner: 'L285', review_img_url: 'coolreviewimages.com', review_body: 'Oooh Lanky Lanky Lancashire', category: 'war games', created_at: new Date(1610964020514), votes: 89 },
+                    { title: 'Dobble!', designer: 'Anna Gram', owner: 'L287', review_img_url: 'coolreviewimages.co.uk', review_body: 'Boggle rip-off', category: 'word games', created_at: new Date(1610964020515), votes: 31 }]
+        const expected = [{ title: 'Invade Yorkshire', designer: 'Rose Redd', owner: 'L285', review_img_url: 'coolreviewimages.com', review_body: 'Oooh Lanky Lanky Lancashire', category: 'war games', created_at: new Date(1610964020514), votes: 89 },
+                    { title: 'Dobble!', designer: 'Anna Gram', owner: 'L287', review_img_url: 'coolreviewimages.co.uk', review_body: 'Boggle rip-off', category: 'word games', created_at: new Date(1610964020515), votes: 31 }]
+        
+        formatReview(input)
+
+        expect(input).toEqual(expected)
+        
+    })
+
+    test('formatComments formats comments in the correct way', () => {
 
         const input = [{ body: 'I agree', votes: 2, author: 'L286', review_id: 1, created_at: new Date(1610964020714)},
                     { body: 'I disagree', votes: -4, author: 'L285', review_id: 2, created_at: new Date(1610964020715)}]
@@ -51,6 +94,19 @@ describe('functions create arrays of appropriate form to be fed into pg.format',
         const actual = formatComment(input)
 
         expect(actual).toEqual(expected)
+        
+    })
+
+    test('formatComments does not mutate input', () => {
+
+        const input = [{ body: 'I agree', votes: 2, author: 'L286', review_id: 1, created_at: new Date(1610964020714)},
+                    { body: 'I disagree', votes: -4, author: 'L285', review_id: 2, created_at: new Date(1610964020715)}]
+        const expected = [{ body: 'I agree', votes: 2, author: 'L286', review_id: 1, created_at: new Date(1610964020714)},
+                    { body: 'I disagree', votes: -4, author: 'L285', review_id: 2, created_at: new Date(1610964020715)}]
+        
+        formatComment(input)
+
+        expect(input).toEqual(expected)
         
     })
 

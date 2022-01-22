@@ -55,6 +55,18 @@ exports.selectReviews = async (sortQuery, orderQuery, categoryQuery, pageQuery, 
 
     if (categoryQuery) {
 
+        for (let i = 0; i < categoryQuery.length; i++) {
+
+            if (categoryQuery[i] === "'") {
+
+                categoryQuery = categoryQuery.substring(0, i) + "'" + categoryQuery.substring(i, categoryQuery.length)
+
+                i++
+
+            }
+
+        }
+
         conditionalLine = `WHERE reviews.category = '${categoryQuery}'`
 
     }
@@ -90,6 +102,18 @@ exports.selectReviews = async (sortQuery, orderQuery, categoryQuery, pageQuery, 
 }
 
 exports.insertReview = async (title, owner, review_body, designer, category) => {
+
+    for (let i = 0; i < category.length; i++) {
+
+        if (category[i] === "'") {
+
+            category = category.substring(0, i) + "'" + category.substring(i, category.length)
+
+            i++
+
+        }
+
+    }
 
     const query = `INSERT INTO reviews
                     (title, owner, review_body, designer, category)
