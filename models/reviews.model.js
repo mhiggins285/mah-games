@@ -14,7 +14,7 @@ exports.selectReview = async (review_id) => {
 
 }
 
-exports.updateReview = async ( review_id, inc_votes ) => {
+exports.updateReviewVotes = async ( review_id, inc_votes ) => {
 
     const readQuery = `SELECT * FROM reviews
                     WHERE review_id = $1;`
@@ -143,5 +143,18 @@ exports.deleteReviewFrom = async (review_id) => {
                         WHERE review_id = $1;`
 
     await db.query(reviewQuery, [review_id])
+
+}
+
+exports.updateReviewBody = async ( review_id, review_body ) => {
+
+    const query = `UPDATE reviews
+                    SET review_body = $1
+                    WHERE review_id = $2
+                    RETURNING *;`
+
+    const response = await db.query(query, [review_body, review_id])
+
+    return response.rows[0]
 
 }

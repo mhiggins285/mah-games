@@ -1,6 +1,6 @@
 exports.checksMethodNotAllowed = (req, res, next) => {
 
-  const availableEndpoints = ['/api', '/api/categories', '/api/users', '/api/users/:username', '/api/reviews', '/api/reviews/:review_id/comments', '/api/comments/:comment_id']
+  const availableEndpoints = ['/api', '/api/categories', '/api/users', '/api/users/:username', '/api/reviews', '/api/reviews/:review_id/comments', '/api/comments/:comment_id', '/api/comments/:comment_id/votes', '/api/comments/:comment_id/body', '/api/reviews/:review_id/votes', '/api/reviews/:review_id/body']
 
   if (availableEndpoints.includes(req.url)) {
 

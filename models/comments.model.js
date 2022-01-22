@@ -52,7 +52,7 @@ exports.deleteCommentFrom = async (comment_id) => {
 
 }
 
-exports.updateComment = async ( comment_id, inc_votes ) => {
+exports.updateCommentVotes = async ( comment_id, inc_votes ) => {
 
     const readQuery = `SELECT * FROM comments
                     WHERE comment_id = $1;`
@@ -69,5 +69,18 @@ exports.updateComment = async ( comment_id, inc_votes ) => {
     const writeResponse = await db.query(writeQuery, [newVotes, comment_id])
 
     return writeResponse.rows[0]
+
+}
+
+exports.updateCommentBody = async ( comment_id, body ) => {
+
+    const query = `UPDATE comments
+                    SET body = $1
+                    WHERE comment_id = $2
+                    RETURNING *;`
+
+    const response = await db.query(query, [body, comment_id])
+
+    return response.rows[0]
 
 }

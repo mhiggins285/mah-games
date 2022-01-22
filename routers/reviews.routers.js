@@ -1,10 +1,11 @@
 const express = require('express')
 
 const { getReview,
-        patchReview,
+        patchReviewVotes,
         getReviews,
         postReview,
-        deleteReview } = require('../controllers/reviews.controller.js')
+        deleteReview,
+        patchReviewBody } = require('../controllers/reviews.controller.js')
     
 const { getCommentsByReviewId,
         postCommentToReview } = require('../controllers/comments.controller.js')
@@ -18,8 +19,11 @@ reviewRouter.route('/')
 
 reviewRouter.route('/:review_id')
             .get(getReview)
-            .patch(patchReview)
             .delete(deleteReview)
+
+reviewRouter.patch('/:review_id/votes', patchReviewVotes)
+
+reviewRouter.patch('/:review_id/body', patchReviewBody)
 
 reviewRouter.route('/:review_id/comments')
             .get(getCommentsByReviewId)

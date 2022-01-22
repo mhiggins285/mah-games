@@ -77,14 +77,14 @@ describe('/api/users/:username', () => {
 
 })
 
-describe('/api/comments/:comment_id', () => {
+describe('/api/comments/:comment_id/votes', () => {
 
     describe('PATCH', () => {
 
         test('patch request can be used to change the vote count of a comment by a specified value', () => {
 
             return request(app)
-                    .patch('/api/comments/1')
+                    .patch('/api/comments/1/votes')
                     .send({ inc_votes: 2 })
                     .expect(200)
                     .then((res) => {
@@ -98,7 +98,7 @@ describe('/api/comments/:comment_id', () => {
         test('patch request can be used to change the vote count of a comment by negative values', () => {
 
             return request(app)
-                    .patch('/api/comments/3')
+                    .patch('/api/comments/3/votes')
                     .send({ inc_votes: -6 })
                     .expect(200)
                     .then((res) => {
@@ -112,7 +112,7 @@ describe('/api/comments/:comment_id', () => {
         test('returns error when trying to patch comment that does not exist', () => {
 
             return request(app)
-                    .patch('/api/comments/999')
+                    .patch('/api/comments/999/votes')
                     .send({ inc_votes: 1 })
                     .expect(404)
                     .then((res) => {
@@ -126,7 +126,7 @@ describe('/api/comments/:comment_id', () => {
         test('returns error when invalid comment_id is entered', () => {
 
             return request(app)
-                    .patch('/api/comments/string')
+                    .patch('/api/comments/string/votes')
                     .send({ inc_votes: 1 })
                     .expect(400)
                     .then((res) => {
@@ -140,7 +140,7 @@ describe('/api/comments/:comment_id', () => {
         test('returns error when body of request does not contain inc_votes property', () => {
 
             return request(app)
-                    .patch('/api/comments/4')
+                    .patch('/api/comments/4/votes')
                     .send({ ince_vote: 4 })
                     .expect(400)
                     .then((res) => {
@@ -154,7 +154,7 @@ describe('/api/comments/:comment_id', () => {
         test('returns error when inc_votes value is not a number', () => {
 
             return request(app)
-                    .patch('/api/comments/4')
+                    .patch('/api/comments/4/votes')
                     .send({ inc_votes: 'Four' })
                     .expect(400)
                     .then((res) => {
@@ -168,7 +168,7 @@ describe('/api/comments/:comment_id', () => {
         test('returns error when inc_votes value is not an integer', () => {
 
             return request(app)
-                    .patch('/api/comments/4')
+                    .patch('/api/comments/4/votes')
                     .send({ inc_votes: 4.2 })
                     .expect(400)
                     .then((res) => {

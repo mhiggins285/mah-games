@@ -267,12 +267,16 @@ describe('/api/reviews/:review_id', () => {
 
     })
 
+})
+
+describe('/api/reviews/:review_id/votes', () => {
+
     describe('PATCH', () => {
 
         test('patch request can be used to change the vote count of a review by a specified value', () => {
 
             return request(app)
-                    .patch('/api/reviews/2')
+                    .patch('/api/reviews/2/votes')
                     .send({ inc_votes: 2 })
                     .expect(200)
                     .then((res) => {
@@ -286,7 +290,7 @@ describe('/api/reviews/:review_id', () => {
         test('patch request can be used to change the vote count of a review by negative values', () => {
 
             return request(app)
-                    .patch('/api/reviews/3')
+                    .patch('/api/reviews/3/votes')
                     .send({ inc_votes: -6 })
                     .expect(200)
                     .then((res) => {
@@ -300,7 +304,7 @@ describe('/api/reviews/:review_id', () => {
         test('returns error when trying to patch review that does not exist', () => {
 
             return request(app)
-                    .patch('/api/reviews/999')
+                    .patch('/api/reviews/999/votes')
                     .send({ inc_votes: 1 })
                     .expect(404)
                     .then((res) => {
@@ -314,7 +318,7 @@ describe('/api/reviews/:review_id', () => {
         test('returns error when invalid review_id is entered', () => {
 
             return request(app)
-                    .patch('/api/reviews/string')
+                    .patch('/api/reviews/string/votes')
                     .send({ inc_votes: 1 })
                     .expect(400)
                     .then((res) => {
@@ -328,7 +332,7 @@ describe('/api/reviews/:review_id', () => {
         test('returns error when body of request does not contain inc_votes property', () => {
 
             return request(app)
-                    .patch('/api/reviews/4')
+                    .patch('/api/reviews/4/votes')
                     .send({ ince_vote: 4 })
                     .expect(400)
                     .then((res) => {
@@ -342,7 +346,7 @@ describe('/api/reviews/:review_id', () => {
         test('returns error when inc_votes value is not a number', () => {
 
             return request(app)
-                    .patch('/api/reviews/4')
+                    .patch('/api/reviews/4/votes')
                     .send({ inc_votes: 'Four' })
                     .expect(400)
                     .then((res) => {
@@ -356,7 +360,7 @@ describe('/api/reviews/:review_id', () => {
         test('returns error when inc_votes value is not an integer', () => {
 
             return request(app)
-                    .patch('/api/reviews/4')
+                    .patch('/api/reviews/4/votes')
                     .send({ inc_votes: 4.2 })
                     .expect(400)
                     .then((res) => {

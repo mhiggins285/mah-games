@@ -1,8 +1,9 @@
 const { selectReview,
-        updateReview,
+        updateReviewVotes,
         selectReviews,
         insertReview,
-        deleteReviewFrom } = require('../models/reviews.model.js')
+        deleteReviewFrom,
+        updateReviewBody } = require('../models/reviews.model.js')
 
 const { checkReviewExists,
         checkUserExists,
@@ -43,7 +44,7 @@ exports.getReview = (req, res, next) => {
 
 }
 
-exports.patchReview = (req, res, next) => {
+exports.patchReviewVotes = (req, res, next) => {
 
     const { review_id } = req.params
     const { inc_votes } = req.body
@@ -63,7 +64,7 @@ exports.patchReview = (req, res, next) => {
 
                 }
 
-                return updateReview(review_id, inc_votes)
+                return updateReviewVotes(review_id, inc_votes)
 
             })
             .then((review) => {
@@ -240,6 +241,44 @@ exports.deleteReview = (req, res, next) => {
             .then(() => {
 
                 res.status(204).send({})
+
+            })
+            .catch(next)
+
+    }
+
+}
+
+exports.patchReviewBody = (req, res, next) => {
+
+    const { review_id } = req.params
+    const { review_body } = req.body
+
+    if (review_body === undefined || review_body === '' || !Number.isInteger(parseFloat(review_id))) {
+
+        next({ status: 400, message: 'Bad request' })
+
+    } else if (review_body.length > 2000) {
+
+        next({ status: 400, message: 'Review body too long' })
+
+    } else {
+
+        return checkReviewExists(review_id)
+            .then((doesReviewExist) => {
+
+                if (!doesReviewExist) {
+
+                    return Promise.reject({ status: 404, message: "Review does not exist" })
+
+                }
+
+                return updateReviewBody(review_id, review_body)
+
+            })
+            .then((review) => {
+
+                res.status(200).send({ review })
 
             })
             .catch(next)

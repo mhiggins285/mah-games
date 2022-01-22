@@ -104,7 +104,7 @@
       }
     }
   },
-  "PATCH /api/reviews/:review_id": {
+  "PATCH /api/reviews/:review_id/votes": {
     "description": "updates the votes value on the review with the given review ID by the inc_votes value in the request",
     "exampleRequest": {
       "inc_votes": 2
@@ -156,7 +156,7 @@
       }
     }
   },
-  "PATCH /api/comments/:comment_id": {
+  "PATCH /api/comments/:comment_id/votes": {
     "description": "updates the votes value on the comment with the given comment ID by the inc_votes value in the request",
     "exampleRequest": {
       "inc_votes": 2

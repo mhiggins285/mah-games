@@ -1,7 +1,8 @@
 const { selectCommentsByReviewId,
         insertComment,
         deleteCommentFrom,
-        updateComment } = require('../models/comments.model.js')
+        updateCommentVotes,
+        updateCommentBody } = require('../models/comments.model.js')
 
 const { checkReviewExists,
         checkUserExists,
@@ -142,7 +143,7 @@ exports.deleteComment = (req, res, next) => {
 
 }
 
-exports.patchComment = (req, res, next) => {
+exports.patchCommentVotes = (req, res, next) => {
 
     const { comment_id } = req.params
     const { inc_votes } = req.body
@@ -162,7 +163,45 @@ exports.patchComment = (req, res, next) => {
 
                 }
 
-                return updateComment(comment_id, inc_votes)
+                return updateCommentVotes(comment_id, inc_votes)
+
+            })
+            .then((comment) => {
+
+                res.status(200).send({ comment })
+
+            })
+            .catch(next)
+
+    }
+
+}
+
+exports.patchCommentBody = (req, res, next) => {
+
+    const { comment_id } = req.params
+    const { body } = req.body
+
+    if (body === undefined || body === '' || !Number.isInteger(parseFloat(comment_id))) {
+        
+        next({ status: 400, message: 'Bad request' })
+
+    } else if (body.length > 1000) {
+
+        next({ status: 400, message: 'Comment body too long' })
+
+    } else {
+
+        return checkCommentExists(comment_id)
+            .then((doesCommentExist) => {
+
+                if (!doesCommentExist) {
+
+                    return Promise.reject({ status: 404, message: "Comment does not exist" })
+
+                }
+
+                return updateCommentBody(comment_id, body)
 
             })
             .then((comment) => {
