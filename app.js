@@ -1,4 +1,5 @@
 const express = require("express")
+const cors = require('cors')
 
 const { checksMethodNotAllowed,
     handlesInvalidEndpoint, 
@@ -8,6 +9,8 @@ const { checksMethodNotAllowed,
 const apiRouter = require("./routers/api.routers.js")
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.json())
 
