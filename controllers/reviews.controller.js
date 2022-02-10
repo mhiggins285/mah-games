@@ -80,7 +80,7 @@ exports.patchReviewVotes = (req, res, next) => {
 
 exports.getReviews = (req, res, next) => {
 
-    const validSortQueries = ['review_id', 'title', 'designer', 'owner', 'review_body', 'category', 'created_at', 'votes', undefined]
+    const validSortQueries = ['review_id', 'title', 'designer', 'owner', 'review_body', 'category', 'created_at', 'votes', 'comment_count', undefined]
     const validOrderQueries = ['asc', 'desc', undefined]
 
     const sortQuery = req.query.sort_by
