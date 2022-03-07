@@ -6,6 +6,10 @@ An online hosted version of this repository can be found at:
 
 https://mah-games.herokuapp.com/
 
+The repository for the front-end of this project can be found at:
+
+https://github.com/mhiggins285/mah-games-fe
+
 ## About
 
 In this project I have created a API for a board game review website, complete with users and commenting functionality. Please use the GET /api endpoint to see a list of available endpoints, along with requirements for request bodies and available queries.
