@@ -4,7 +4,7 @@
 
 An online hosted version of this repository can be found at:
 
-https://mah-games.herokuapp.com/
+https://mah-games.herokuapp.com/api
 
 The repository for the front-end of this project can be found at:
 
